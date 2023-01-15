@@ -20,6 +20,7 @@ import { useStores } from "../models" // @demo remove-current-line
 import {
   LoginScreen, // @demo remove-current-line
   WelcomeScreen,
+  BookingsScreen
 } from "../screens"
 import { DemoNavigator, DemoTabParamList } from "./DemoNavigator" // @demo remove-current-line
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
@@ -41,6 +42,7 @@ export type AppStackParamList = {
   Welcome: undefined
   Login: undefined // @demo remove-current-line
   Demo: NavigatorScreenParams<DemoTabParamList> // @demo remove-current-line
+  Bookings: undefined
   // 🔥 Your screens go here
 }
 
@@ -68,8 +70,10 @@ const AppStack = observer(function AppStack() {
   return (
     <Stack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName={isAuthenticated ? "Welcome" : "Login"} // @demo remove-current-line
+      initialRouteName={'Bookings'}
+      // initialRouteName={isAuthenticated ? "Welcome" : "Login"} // @demo remove-current-line
     >
+      <Stack.Screen name="Bookings" component={BookingsScreen} />
       {/* @demo remove-block-start */}
       {isAuthenticated ? (
         <>
