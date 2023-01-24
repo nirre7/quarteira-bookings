@@ -1,4 +1,4 @@
-package com.quarteirabookings.newarchitecture.components;
+package com.niso.quarteirabookings.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;

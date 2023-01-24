@@ -1,4 +1,4 @@
-package com.quarteirabookings;
+package com.niso.quarteirabookings;
 
 import android.os.Bundle;
 

@@ -1,4 +1,4 @@
-package com.quarteirabookings.newarchitecture;
+package com.niso.quarteirabookings.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.quarteirabookings.BuildConfig;
-import com.quarteirabookings.newarchitecture.components.MainComponentsRegistry;
-import com.quarteirabookings.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.niso.quarteirabookings.BuildConfig;
+import com.niso.quarteirabookings.newarchitecture.components.MainComponentsRegistry;
+import com.niso.quarteirabookings.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 
