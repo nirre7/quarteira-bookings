@@ -27,7 +27,6 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
     const getBookings = async () => {
       const bookingsFromDb = await firestore().collection("bookings").get()
       const bookings = bookingsFromDb.docs.map(doc => doc.data()) as unknown as Booking[]
-      console.tron.log('bookings', bookings)
       setBookings(bookings)
     }
 
