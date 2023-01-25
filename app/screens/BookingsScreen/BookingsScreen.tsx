@@ -76,12 +76,6 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
           </View>)
         }
 
-        <Button icon={"camera"}
-                mode={"elevated"}
-                onPress={() => console.tron.log("Pressed")}
-                style={{ marginLeft: 10, marginRight: 10 }}>
-          Testing paper
-        </Button>
       </View>
     </View>
   )
