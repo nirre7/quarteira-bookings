@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "137043893557",
+    "project_id": "quarteira-bookings-firebase",
+    "storage_bucket": "quarteira-bookings-firebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:137043893557:android:4f791a09849f97ad35407c",
+        "android_client_info": {
+          "package_name": "com.niso.quarteirabookings"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "137043893557-67bqteeig5n4k4iedh3gtla6s7iubpnn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbFqDB5SsMGZoOUateByI0O8jH4fTPQHs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "137043893557-67bqteeig5n4k4iedh3gtla6s7iubpnn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
