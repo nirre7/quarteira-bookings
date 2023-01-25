@@ -1,11 +1,12 @@
 import React, { FC, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { View, ViewStyle } from "react-native"
-import { Screen, Text } from "../../components"
+import { Text } from "../../components"
 import { AppStackScreenProps } from "../../navigators"
 import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firestore"
 import { Booking } from "../../models/booking"
 import auth from "@react-native-firebase/auth"
+import { Appbar, Button } from "react-native-paper"
 
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "../models"
@@ -58,24 +59,39 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
 
 
   return (
-    <Screen style={$root}
-            safeAreaEdges={["top", "bottom"]}
-            preset="scroll">
-      <Text text="bookingssssss" />
+    <View>
+      <Appbar.Header>
+        <Appbar.Content title={"Quarteria Bookings"}></Appbar.Content>
+      </Appbar.Header>
+      <View style={container}>
 
-      {
-        // eslint-disable-next-line react/jsx-key
-        bookings.map(b => <View>
-          <Text>
-            {(b.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}
-            {/*{b.year}*/}
-          </Text>
-        </View>)
-      }
-    </Screen>
+
+        {
+          // eslint-disable-next-line react/jsx-key
+          bookings.map(b => <View>
+            <Text>
+              {(b.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}
+              {/*{b.year}*/}
+            </Text>
+          </View>)
+        }
+
+        <Button icon={"camera"}
+                mode={"elevated"}
+                onPress={() => console.tron.log("Pressed")}
+                style={{ marginLeft: 10, marginRight: 10 }}>
+          Testing paper
+        </Button>
+      </View>
+    </View>
   )
 })
 
 const $root: ViewStyle = {
   flex: 1,
+}
+
+const container: ViewStyle = {
+  marginRight: 10,
+  marginLeft: 10,
 }
