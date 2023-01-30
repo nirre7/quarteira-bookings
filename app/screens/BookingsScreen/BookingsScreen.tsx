@@ -1,12 +1,13 @@
 import React, { FC, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { View, ViewStyle } from "react-native"
-import { Text } from "../../components"
 import { AppStackScreenProps } from "../../navigators"
 import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firestore"
 import { Booking } from "../../models/booking"
 import auth from "@react-native-firebase/auth"
-import { Appbar, Button } from "react-native-paper"
+import { Appbar, Card , Text } from "react-native-paper"
+import { BookingStatus } from "../../models/booking-status"
+import { isAfter } from "date-fns"
 
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "../models"
@@ -27,8 +28,17 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
 
     const getBookings = async () => {
       const bookingsFromDb = await firestore().collection("bookings").get()
-      const bookings = bookingsFromDb.docs.map(doc => doc.data()) as unknown as Booking[]
+      const bookings = (bookingsFromDb.docs.map(doc => doc.data()) as unknown as Booking[])
+        .filter(b => b.status !== BookingStatus.REMOVED)
+        .sort((d1, d2) => {
+
+          const d1Start = (d1.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate()
+          const d2Start = (d2.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate()
+
+          return isAfter(d1Start, d2Start) ? 1 : -1
+        })
       setBookings(bookings)
+      console.tron.debug(`Found ${bookings.length} bookings!`)
     }
 
     if (auth().currentUser) {
@@ -57,7 +67,6 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
 
   }, [])
 
-
   return (
     <View>
       <Appbar.Header>
@@ -65,25 +74,28 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
       </Appbar.Header>
       <View style={container}>
 
-
         {
-          // eslint-disable-next-line react/jsx-key
-          bookings.map(b => <View>
-            <Text>
-              {(b.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}
-              {/*{b.year}*/}
-            </Text>
-          </View>)
+          bookings.map(b =>
+            <Card style={{ marginTop: 25 }}
+                  key={(b.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}>
+              <Card.Content>
+                <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
+                  <View>
+                    <Text variant="titleSmall">Start</Text>
+                    <Text>{(b.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}</Text>
+                  </View>
+                  <View>
+                    <Text variant="titleSmall">End</Text>
+                    <Text>{(b.end as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}</Text>
+                  </View>
+                </View>
+              </Card.Content>
+            </Card>)
         }
-
       </View>
     </View>
   )
 })
-
-const $root: ViewStyle = {
-  flex: 1,
-}
 
 const container: ViewStyle = {
   marginRight: 10,
