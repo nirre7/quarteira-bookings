@@ -1,11 +1,11 @@
-import React, { FC, useEffect, useState } from "react"
+import React, { FC, useCallback, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { View, ViewStyle } from "react-native"
+import { RefreshControl, ScrollView, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "../../navigators"
 import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firestore"
 import { Booking } from "../../models/booking"
 import auth from "@react-native-firebase/auth"
-import { Appbar, Card , Text } from "react-native-paper"
+import { Appbar, Card, Text } from "react-native-paper"
 import { BookingStatus } from "../../models/booking-status"
 import { isAfter } from "date-fns"
 
@@ -23,23 +23,32 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
   // const navigation = useNavigation()
 
   const [bookings, setBookings] = useState<Booking[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const getBookings = async () => {
+    setLoading(true)
+    const bookingsFromDb = await firestore().collection("bookings").get()
+    const bookings = (bookingsFromDb.docs.map(doc => doc.data()) as unknown as Booking[])
+      .filter(b => b.status !== BookingStatus.REMOVED)
+      .sort((d1, d2) => {
+
+        const d1Start = (d1.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate()
+        const d2Start = (d2.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate()
+
+        return isAfter(d1Start, d2Start) ? 1 : -1
+      })
+    setBookings(bookings)
+    console.tron.debug(`Found ${bookings.length} bookings!`)
+    setLoading(false)
+  }
+
+  const onLoading = useCallback(() => {
+    setLoading(true)
+    getBookings()
+  }, [])
 
   useEffect(() => {
 
-    const getBookings = async () => {
-      const bookingsFromDb = await firestore().collection("bookings").get()
-      const bookings = (bookingsFromDb.docs.map(doc => doc.data()) as unknown as Booking[])
-        .filter(b => b.status !== BookingStatus.REMOVED)
-        .sort((d1, d2) => {
-
-          const d1Start = (d1.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate()
-          const d2Start = (d2.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate()
-
-          return isAfter(d1Start, d2Start) ? 1 : -1
-        })
-      setBookings(bookings)
-      console.tron.debug(`Found ${bookings.length} bookings!`)
-    }
 
     if (auth().currentUser) {
       getBookings()
@@ -72,8 +81,8 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
       <Appbar.Header>
         <Appbar.Content title={"Quarteria Bookings"}></Appbar.Content>
       </Appbar.Header>
-      <View style={container}>
-
+      <ScrollView contentContainerStyle={container}
+                  refreshControl={<RefreshControl refreshing={loading} onRefresh={onLoading} />}>
         {
           bookings.map(b =>
             <Card style={{ marginTop: 25 }}
@@ -92,7 +101,7 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
               </Card.Content>
             </Card>)
         }
-      </View>
+      </ScrollView>
     </View>
   )
 })
@@ -100,4 +109,5 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
 const container: ViewStyle = {
   marginRight: 10,
   marginLeft: 10,
+  marginBottom: 50,
 }
