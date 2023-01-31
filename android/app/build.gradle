@@ -231,6 +231,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            storeFile file('quarteira-bookings.keystore')
+            storePassword '!aFancyPassword22'
+            keyAlias 'quarteira_bookings'
+            keyPassword '!aFancyPassword22'
+        }
     }
     buildTypes {
         debug {
@@ -362,4 +368,5 @@ project.ext.vectoricons = [
         iconFontNames: [ 'MaterialCommunityIcons.ttf' ]
 ]
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+apply plugin: 'com.google.gms.google-services'
 
