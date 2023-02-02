@@ -38,7 +38,6 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
         return isAfter(d1Start, d2Start) ? 1 : -1
       })
     setBookings(bookings)
-    console.tron.debug(`Found ${bookings.length} bookings!`)
     setLoading(false)
   }
 
@@ -67,19 +66,10 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
       auth()
         .signInAnonymously()
         .then(() => {
-          console.tron.log("User account created & signed in!")
           getBookings()
         })
         .catch(error => {
-          if (error.code === "auth/email-already-in-use") {
-            console.tron.log("That email address is already in use!")
-          }
-
-          if (error.code === "auth/invalid-email") {
-            console.tron.log("That email address is invalid!")
-          }
-
-          console.tron.warn(error)
+          __DEV__ && console.tron.warn(error)
         })
     }
 
