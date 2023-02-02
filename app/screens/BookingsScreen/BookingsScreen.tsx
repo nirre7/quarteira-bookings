@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { RefreshControl, ScrollView, View, ViewStyle } from "react-native"
+import { Dimensions, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "../../navigators"
 import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firestore"
 import { Booking } from "../../models/booking"
@@ -8,6 +8,7 @@ import auth from "@react-native-firebase/auth"
 import { Appbar, Card, Text } from "react-native-paper"
 import { BookingStatus } from "../../models/booking-status"
 import { isAfter } from "date-fns"
+import { FlashList } from "@shopify/flash-list"
 
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "../models"
@@ -57,7 +58,6 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
 
   useEffect(() => {
 
-
     if (auth().currentUser) {
       getBookings()
     }
@@ -75,47 +75,49 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
 
   }, [])
 
-  return (
-    <View>
-      <Appbar.Header>
-        <Appbar.Content title={"Quarteria Bookings"}></Appbar.Content>
-      </Appbar.Header>
-      <ScrollView contentContainerStyle={container}
-                  refreshControl={<RefreshControl refreshing={loading} onRefresh={onLoading} />}>
-        {
-          bookings.map(b =>
-            <Card style={card}
-                  key={(b.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}>
-              <Card.Content>
-                <View style={cardContent}>
-                  <View>
-                    <Text variant="titleSmall">Start</Text>
-                    <Text>{(b.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}</Text>
-                  </View>
-                  <View>
-                    <Text variant="titleSmall">End</Text>
-                    <Text>{(b.end as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}</Text>
-                  </View>
-                </View>
-              </Card.Content>
-            </Card>)
-        }
-      </ScrollView>
-    </View>
-  )
-})
+  if (bookings.length > 0 && !loading) {
 
-const container: ViewStyle = {
-  flexGrow: 1,
-  marginRight: 10,
-  marginLeft: 10,
-  paddingLeft: 10,
-  paddingRight: 10,
-  marginBottom: 50,
-}
+    return (
+      <View>
+        <Appbar.Header>
+          <Appbar.Content title={"Quarteria Bookings"}></Appbar.Content>
+        </Appbar.Header>
+        <View style={{ width: Dimensions.get("screen").width, height: Dimensions.get("screen").height }}>
+          <FlashList
+            data={bookings}
+            renderItem={({ item }: { item: Booking }) => {
+              return (
+                <Card style={card}
+                      key={(item.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}>
+                  <Card.Content>
+                    <View style={cardContent}>
+                      <View>
+                        <Text variant="titleSmall">Start</Text>
+                        <Text>{(item.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}</Text>
+                      </View>
+                      <View>
+                        <Text variant="titleSmall">End</Text>
+                        <Text>{(item.end as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}</Text>
+                      </View>
+                    </View>
+                  </Card.Content>
+                </Card>)
+            }}
+            estimatedItemSize={50}
+          />
+        </View>
+      </View>
+    )
+  } else {
+    return null
+  }
+
+})
 
 const card: ViewStyle = {
   marginTop: 25,
+  marginLeft: 15,
+  marginRight: 15,
 }
 
 const cardContent: ViewStyle = {
