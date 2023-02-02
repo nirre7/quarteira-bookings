@@ -47,6 +47,15 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
     getBookings()
   }, [])
 
+  // TODO fix ..
+  // const onFirebaseResult = (snapshot) => {
+  //   console.tron.debug(snapshot)
+  // }
+  //
+  // firestore().collection("Bookings").onSnapshot(onFirebaseResult, (error) => {
+  //   console.tron.warn(error)
+  // })
+
   useEffect(() => {
 
 
@@ -85,10 +94,10 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
                   refreshControl={<RefreshControl refreshing={loading} onRefresh={onLoading} />}>
         {
           bookings.map(b =>
-            <Card style={{ marginTop: 25 }}
+            <Card style={card}
                   key={(b.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}>
               <Card.Content>
-                <View style={{ justifyContent: "space-between", flexDirection: "row" }}>
+                <View style={cardContent}>
                   <View>
                     <Text variant="titleSmall">Start</Text>
                     <Text>{(b.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}</Text>
@@ -107,7 +116,19 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
 })
 
 const container: ViewStyle = {
+  flexGrow: 1,
   marginRight: 10,
   marginLeft: 10,
+  paddingLeft: 10,
+  paddingRight: 10,
   marginBottom: 50,
+}
+
+const card: ViewStyle = {
+  marginTop: 25,
+}
+
+const cardContent: ViewStyle = {
+  justifyContent: "space-between",
+  flexDirection: "row",
 }
