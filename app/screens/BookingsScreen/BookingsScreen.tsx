@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { Dimensions, View, ViewStyle } from "react-native"
+import { Dimensions, RefreshControl, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "../../navigators"
 import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firestore"
 import { Booking } from "../../models/booking"
@@ -40,6 +40,7 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
       })
     setBookings(bookings)
     setLoading(false)
+    __DEV__ && console.tron.log(`Found ${bookings.length} bookings.`)
   }
 
   const onLoading = useCallback(() => {
@@ -84,6 +85,7 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
         </Appbar.Header>
         <View style={{ width: Dimensions.get("screen").width, height: Dimensions.get("screen").height }}>
           <FlashList
+            refreshControl={<RefreshControl refreshing={loading} onRefresh={onLoading} />}
             data={bookings}
             renderItem={({ item }: { item: Booking }) => {
               return (
