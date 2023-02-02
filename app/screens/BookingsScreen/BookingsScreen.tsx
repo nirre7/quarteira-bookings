@@ -56,7 +56,7 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
 
     if (!auth().currentUser) {
       auth()
-        .signInWithEmailAndPassword("niso@niso.com", "udfieq5678asdfasdf3423422")
+        .signInAnonymously()
         .then(() => {
           console.tron.log("User account created & signed in!")
           getBookings()
