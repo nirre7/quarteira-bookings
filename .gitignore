@@ -83,6 +83,7 @@ web-build/
 
 # Configurations
 !env.js
+app/credentials.json
 
 ios/GoogleService-Info.plist
 android/app/google-services.json

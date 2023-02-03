@@ -9,6 +9,7 @@ import { Appbar, Card, Text } from "react-native-paper"
 import { BookingStatus } from "../../models/booking-status"
 import { isAfter } from "date-fns"
 import { FlashList } from "@shopify/flash-list"
+import * as credentials from '../../credentials.json'
 
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "../models"
@@ -48,15 +49,6 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
     getBookings()
   }, [])
 
-  // TODO fix ..
-  // const onFirebaseResult = (snapshot) => {
-  //   console.tron.debug(snapshot)
-  // }
-  //
-  // firestore().collection("Bookings").onSnapshot(onFirebaseResult, (error) => {
-  //   console.tron.warn(error)
-  // })
-
   useEffect(() => {
 
     if (auth().currentUser) {
@@ -65,7 +57,7 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
 
     if (!auth().currentUser) {
       auth()
-        .signInAnonymously()
+        .signInWithEmailAndPassword(credentials.email, credentials.password)
         .then(() => {
           getBookings()
         })
