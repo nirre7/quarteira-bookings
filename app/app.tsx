@@ -21,8 +21,9 @@ import { ErrorBoundary } from "./screens/ErrorScreen/ErrorBoundary"
 import * as storage from "./utils/storage"
 import { customFontsToLoad } from "./theme"
 import { setupReactotron } from "./services/reactotron"
-import {  MD3LightTheme as DefaultTheme, Provider as PaperProvider } from "react-native-paper"
+import { MD3LightTheme as DefaultTheme, Provider as PaperProvider } from "react-native-paper"
 import Config from "./config"
+import { MessagingHandler } from "./components"
 
 // Set up Reactotron, which is a free desktop app for inspecting and debugging
 // React Native apps. Learn more here: https://github.com/infinitered/reactotron
@@ -69,7 +70,7 @@ const theme = {
     // primary: 'tomato',
     // secondary: 'yellow',
   },
-};
+}
 
 interface AppProps {
   hideSplashScreen: () => Promise<void>
@@ -121,6 +122,7 @@ function App(props: AppProps) {
             initialState={initialNavigationState}
             onStateChange={onNavigationStateChange}
           />
+          <MessagingHandler />
         </ErrorBoundary>
       </PaperProvider>
     </SafeAreaProvider>

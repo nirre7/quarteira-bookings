@@ -1,4 +1,10 @@
 const en = {
+  message: {
+    newBooking: "New booking",
+    newBookings: "New bookings",
+    bookingAdded: "One booking has been added",
+    bookingsAdded: "bookings has been added"
+  },
   common: {
     ok: "OK!",
     cancel: "Cancel",
