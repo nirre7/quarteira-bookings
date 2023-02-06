@@ -9,7 +9,7 @@ import { Appbar, Card, Text } from "react-native-paper"
 import { BookingStatus } from "../../models/booking-status"
 import { isAfter } from "date-fns"
 import { FlashList } from "@shopify/flash-list"
-import * as credentials from '../../credentials.json'
+import * as credentials from "../../credentials.json"
 
 // import { useNavigation } from "@react-navigation/native"
 // import { useStores } from "../models"
@@ -68,43 +68,38 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
 
   }, [])
 
-  if (bookings.length > 0 && !loading) {
-
-    return (
-      <View>
-        <Appbar.Header>
-          <Appbar.Content title={"Quarteria Bookings"}></Appbar.Content>
-        </Appbar.Header>
-        <View style={{ width: Dimensions.get("screen").width, height: Dimensions.get("screen").height }}>
-          <FlashList
-            refreshControl={<RefreshControl refreshing={loading} onRefresh={onLoading} />}
-            data={bookings}
-            renderItem={({ item }: { item: Booking }) => {
-              return (
-                <Card style={card}
-                      key={(item.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}>
-                  <Card.Content>
-                    <View style={cardContent}>
-                      <View>
-                        <Text variant="titleSmall">Start</Text>
-                        <Text>{(item.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}</Text>
-                      </View>
-                      <View>
-                        <Text variant="titleSmall">End</Text>
-                        <Text>{(item.end as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}</Text>
-                      </View>
+  return (
+    <View>
+      <Appbar.Header>
+        <Appbar.Content title={"Quarteria Bookings"}></Appbar.Content>
+      </Appbar.Header>
+      <View style={{ width: Dimensions.get("screen").width, height: Dimensions.get("screen").height }}>
+        <FlashList
+          refreshControl={<RefreshControl refreshing={loading} onRefresh={onLoading} />}
+          data={bookings}
+          renderItem={({ item }: { item: Booking }) => {
+            return (
+              <Card style={card}
+                    key={(item.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}>
+                <Card.Content>
+                  <View style={cardContent}>
+                    <View>
+                      <Text variant="titleSmall">Start</Text>
+                      <Text>{(item.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}</Text>
                     </View>
-                  </Card.Content>
-                </Card>)
-            }}
-            estimatedItemSize={50}
-          />
-        </View>
+                    <View>
+                      <Text variant="titleSmall">End</Text>
+                      <Text>{(item.end as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}</Text>
+                    </View>
+                  </View>
+                </Card.Content>
+              </Card>)
+          }}
+          estimatedItemSize={50}
+        />
       </View>
-    )
-  } else {
-    return null
-  }
+    </View>
+  )
 
 })
 
