@@ -1,56 +1,22 @@
-import React, { FC, useCallback, useEffect, useState } from "react"
+import React, { FC, useEffect } from "react"
 import { observer } from "mobx-react-lite"
-import { Dimensions, RefreshControl, View, ViewStyle } from "react-native"
+import { View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "../../navigators"
-import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firestore"
-import { Booking } from "../../models/booking"
 import auth from "@react-native-firebase/auth"
-import { Appbar, Card, Text } from "react-native-paper"
-import { BookingStatus } from "../../models/booking-status"
-import { isAfter } from "date-fns"
-import { FlashList } from "@shopify/flash-list"
+import { Appbar } from "react-native-paper"
 import * as credentials from "../../credentials.json"
-import { DisplayMode } from "../../models/display-mode"
-import { BookingsCalendar } from "../../components"
-
-// import { useNavigation } from "@react-navigation/native"
-// import { useStores } from "../models"
+import { BookingTabs } from "../../components"
+import { useStores } from "../../models"
 
 interface BookingScreenProps extends AppStackScreenProps<"Bookings"> {
 }
 
 export const BookingsScreen: FC<BookingScreenProps> = observer(function BookingsScreen() {
-  // Pull in one of our MST stores
-  // const { someStore, anotherStore } = useStores()
-
-  // Pull in navigation via hook
-  // const navigation = useNavigation()
-
-  const [bookings, setBookings] = useState<Booking[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
-  const [displayMode, setDisplayMode] = useState<DisplayMode>(DisplayMode.CALENDAR)
+  const { bookingStore } = useStores()
 
   const getBookings = async () => {
-    setLoading(true)
-    const bookingsFromDb = await firestore().collection("bookings").get()
-    const bookings = (bookingsFromDb.docs.map(doc => doc.data()) as unknown as Booking[])
-      .filter(b => b.status !== BookingStatus.REMOVED)
-      .sort((d1, d2) => {
-
-        const d1Start = (d1.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate()
-        const d2Start = (d2.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate()
-
-        return isAfter(d1Start, d2Start) ? 1 : -1
-      })
-    setBookings(bookings)
-    setLoading(false)
-    __DEV__ && console.tron.log(`Found ${bookings.length} bookings.`)
+    await bookingStore.getBookings()
   }
-
-  const onLoading = useCallback(() => {
-    setLoading(true)
-    getBookings()
-  }, [])
 
   useEffect(() => {
 
@@ -72,56 +38,19 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
   }, [])
 
   return (
-    <View>
+    <View style={wrapper}>
       <Appbar.Header>
         <Appbar.Content title={"Quarteria Bookings"}></Appbar.Content>
-        <Appbar.Action icon={displayMode === DisplayMode.CALENDAR ? "view-list-outline" : "calendar-month"}
-                       onPress={() => setDisplayMode(displayMode === DisplayMode.CALENDAR ? DisplayMode.LIST : DisplayMode.CALENDAR)} />
       </Appbar.Header>
-      {displayMode === DisplayMode.LIST &&
-        <View style={{ width: Dimensions.get("screen").width, height: Dimensions.get("screen").height }}>
-          <FlashList
-            refreshControl={<RefreshControl refreshing={loading} onRefresh={onLoading} />}
-            data={bookings}
-            renderItem={({ item }: { item: Booking }) => {
-              return (
-                <Card style={card}
-                      key={(item.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}>
-                  <Card.Content>
-                    <View style={cardContent}>
-                      <View>
-                        <Text variant="titleSmall">Start</Text>
-                        <Text>{(item.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}</Text>
-                      </View>
-                      <View>
-                        <Text variant="titleSmall">End</Text>
-                        <Text>{(item.end as unknown as FirebaseFirestoreTypes.Timestamp).toDate().toDateString()}</Text>
-                      </View>
-                    </View>
-                  </Card.Content>
-                </Card>)
-            }}
-            estimatedItemSize={50}
-          />
-        </View>
-      }
-      {displayMode === DisplayMode.CALENDAR &&
-        <View>
-          <BookingsCalendar bookings={bookings}></BookingsCalendar>
-        </View>
-      }
+      <View style={wrapper}>
+        <BookingTabs />
+      </View>
     </View>
   )
-
 })
 
-const card: ViewStyle = {
-  marginTop: 25,
-  marginLeft: 15,
-  marginRight: 15,
+const wrapper: ViewStyle = {
+  flex: 1,
 }
 
-const cardContent: ViewStyle = {
-  justifyContent: "space-between",
-  flexDirection: "row",
-}
+

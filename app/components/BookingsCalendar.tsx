@@ -4,19 +4,15 @@ import { observer } from "mobx-react-lite"
 import { Booking } from "../models/booking"
 import { CalendarList } from "react-native-calendars"
 import { eachDayOfInterval, format, formatISO, startOfYear } from "date-fns"
-import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore"
-
-export interface BookingsCalendarProps {
-  bookings: Booking[]
-}
+import { useStores } from "../models"
 
 function createBookingPeriods(bookings: Booking[]) {
   const markedDates = {}
 
   bookings.forEach(b => {
     const bookingDates = eachDayOfInterval({
-      start: (b.start as unknown as FirebaseFirestoreTypes.Timestamp).toDate(),
-      end: (b.end as unknown as FirebaseFirestoreTypes.Timestamp).toDate(),
+      start: b.start,
+      end: b.end,
     })
 
     bookingDates.forEach((date, index) => {
@@ -35,17 +31,17 @@ function createBookingPeriods(bookings: Booking[]) {
 /**
  * Shows bookings in a calendar
  */
-export const BookingsCalendar = observer(function BookingsCalendar(props: BookingsCalendarProps) {
-  const { bookings } = props
-  const markedDates = createBookingPeriods(bookings)
+export const BookingsCalendar = observer(function BookingsCalendar() {
+  const { bookingStore } = useStores()
+  const markedDates = createBookingPeriods(bookingStore.activeBookings)
 
   return (
     <View>
       <CalendarList
-        minDate={format(startOfYear(new Date()), "yyyy-MM-dd")}
+        minDate={formatISO(startOfYear(new Date()), {representation: 'date'})}
         markingType={"period"}
         markedDates={markedDates}
-        pastScrollRange={2}
+        pastScrollRange={0}
         futureScrollRange={11} />
     </View>
   )

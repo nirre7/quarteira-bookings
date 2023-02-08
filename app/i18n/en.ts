@@ -9,6 +9,8 @@ const en = {
     ok: "OK!",
     cancel: "Cancel",
     back: "Back",
+    start: "Start",
+    end: "End",
     logOut: "Log Out", // @demo remove-current-line
   },
   welcomeScreen: {
