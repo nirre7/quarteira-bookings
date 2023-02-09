@@ -3,6 +3,7 @@ import { Booking, BookingModel } from "./booking"
 import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firestore"
 import { withSetPropAction } from "./helpers/withSetPropAction"
 import { BookingStatus } from "./booking-status"
+import { isAfter } from "date-fns"
 
 export const BookingStoreModel = types
   .model("BookingStore")
@@ -22,6 +23,9 @@ export const BookingStoreModel = types
         b.created = (b.created as unknown as FirebaseFirestoreTypes.Timestamp).toDate()
         b.modified = (b.modified as unknown as FirebaseFirestoreTypes.Timestamp).toDate()
       })
+
+      bookings.sort((b1, b2) => isAfter(b1.start, b2.start) ? 1 : -1)
+
       store.setProp("bookings", bookings)
     },
   }))
