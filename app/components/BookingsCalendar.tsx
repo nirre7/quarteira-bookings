@@ -3,8 +3,9 @@ import { View } from "react-native"
 import { observer } from "mobx-react-lite"
 import { Booking } from "../models/booking"
 import { CalendarList } from "react-native-calendars"
-import { eachDayOfInterval, format, formatISO, startOfYear } from "date-fns"
+import { eachDayOfInterval, formatISO, startOfYear } from "date-fns"
 import { useStores } from "../models"
+import { useTheme } from "react-native-paper"
 
 function createBookingPeriods(bookings: Booking[]) {
   const markedDates = {}
@@ -20,7 +21,7 @@ function createBookingPeriods(bookings: Booking[]) {
         startingDay: index === 0,
         endingDay: index + 1 === bookingDates.length,
         selected: true,
-        color: "#71ff5e",
+        color: "#04b009",
         textColor: "grey",
       }
     })
@@ -33,16 +34,24 @@ function createBookingPeriods(bookings: Booking[]) {
  */
 export const BookingsCalendar = observer(function BookingsCalendar() {
   const { bookingStore } = useStores()
+  const theme = useTheme()
   const markedDates = createBookingPeriods(bookingStore.activeBookings)
 
   return (
     <View>
       <CalendarList
-        minDate={formatISO(startOfYear(new Date()), {representation: 'date'})}
+        minDate={formatISO(startOfYear(new Date()), { representation: "date" })}
         markingType={"period"}
         markedDates={markedDates}
         pastScrollRange={0}
-        futureScrollRange={11} />
+        futureScrollRange={11}
+        theme={{
+          backgroundColor: theme.colors.background,
+          calendarBackground: theme.colors.background,
+          monthTextColor: theme.colors.onSurface,
+          dayTextColor: theme.colors.onSurface,
+        }}
+      />
     </View>
   )
 })
