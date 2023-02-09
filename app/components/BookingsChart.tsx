@@ -3,14 +3,13 @@ import { Dimensions, ScrollView, View, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 import { VictoryLabel, VictoryPie } from "victory-native"
 import Svg from "react-native-svg"
-import { VictoryLabelStyleObject } from "victory-core/src/victory-theme/types"
-import { Text } from "react-native-paper"
+import { Text, ThemeBase, useTheme } from "react-native-paper"
 import { useStores } from "../models"
 import { differenceInCalendarDays, eachDayOfInterval, getDaysInMonth, getMonth } from "date-fns"
 import { translate, TxKeyPath } from "../i18n"
 import uuid from "react-native-uuid"
 
-function getProgressChart(width: number, datesBooked: number, titleLabel: TxKeyPath) {
+function getProgressChart(width: number, datesBooked: number, titleLabel: TxKeyPath, theme: any) {
 
   return (
     <View style={{ width: width }}
@@ -32,7 +31,7 @@ function getProgressChart(width: number, datesBooked: number, titleLabel: TxKeyP
           style={{
             data: {
               fill: ({ datum }) => {
-                return datum.x === 1 ? "#2bd63f" : "transparent"
+                return datum.x === 1 ? "#04cf0b" : "transparent"
               },
             },
           }}
@@ -43,14 +42,14 @@ function getProgressChart(width: number, datesBooked: number, titleLabel: TxKeyP
           x={200}
           y={200}
           text={`${datesBooked}%`}
-          style={pieChartLabel}
+          style={{ fontSize: 50, fill: theme.colors.onSurface }}
         />
       </Svg>
     </View>
   )
 }
 
-function getMonthCharts(aThirdOfTheScreenSize: number, numberOfBookedDaysPerMonth: Map<number, number>) {
+function getMonthCharts(aThirdOfTheScreenSize: number, numberOfBookedDaysPerMonth: Map<number, number>, theme: ThemeBase) {
 
   const chunkSize = 3
   const quarters = []
@@ -66,7 +65,7 @@ function getMonthCharts(aThirdOfTheScreenSize: number, numberOfBookedDaysPerMont
       <View style={quarterWrapper}
             key={uuid.v1().toString()}>
         {quarter.map(month => {
-          return getProgressChart(aThirdOfTheScreenSize, month[1], `charts.month_${month[0]}` as TxKeyPath)
+          return getProgressChart(aThirdOfTheScreenSize, month[1], `charts.month_${month[0]}` as TxKeyPath, theme)
         })}
       </View>
     )
@@ -75,6 +74,7 @@ function getMonthCharts(aThirdOfTheScreenSize: number, numberOfBookedDaysPerMont
 
 export const BookingsChart = observer(function BookingsChart() {
   const { bookingStore } = useStores()
+  const theme = useTheme()
 
   const halfScreenSize = Dimensions.get("screen").width / 2
   const aThirdOfTheScreenSize = Dimensions.get("screen").width / 3
@@ -99,21 +99,17 @@ export const BookingsChart = observer(function BookingsChart() {
   }
 
   return (
-    <ScrollView>
+    <ScrollView style={{ backgroundColor: theme.colors.background }}>
       <View style={wrapper}>
-        {getProgressChart(halfScreenSize, datesBookedDuringHighSeason, "charts.highSeasonTitle")}
-        {getProgressChart(halfScreenSize, datesBookedDuringLowSeason, "charts.lowSeasonTitle")}
+        {getProgressChart(halfScreenSize, datesBookedDuringHighSeason, "charts.highSeasonTitle", theme)}
+        {getProgressChart(halfScreenSize, datesBookedDuringLowSeason, "charts.lowSeasonTitle", theme)}
       </View>
       <View style={wrapper2}>
-        {getMonthCharts(aThirdOfTheScreenSize, numberOfBookedDaysPerMonth)}
+        {getMonthCharts(aThirdOfTheScreenSize, numberOfBookedDaysPerMonth, theme)}
       </View>
     </ScrollView>
   )
 })
-
-const pieChartLabel: VictoryLabelStyleObject = {
-  fontSize: 50,
-}
 
 const wrapper: ViewStyle = {
   flexDirection: "row",
