@@ -20,7 +20,7 @@ export const BookingList = observer(function BookingList() {
         data={bookingStore.activeBookings}
         renderItem={({ item }: { item: Booking }) => {
           return (
-            <Card style={card}>
+            <Card style={card} mode={'contained'}>
               <Card.Content>
                 <View style={cardContent}>
                   <View>
