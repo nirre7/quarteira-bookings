@@ -8,21 +8,23 @@ import { Text } from "react-native-paper"
 import { useStores } from "../models"
 import { differenceInCalendarDays, eachDayOfInterval, getDaysInMonth, getMonth } from "date-fns"
 import { translate, TxKeyPath } from "../i18n"
+import uuid from "react-native-uuid"
 
 function getProgressChart(width: number, datesBooked: number, titleLabel: TxKeyPath) {
 
   return (
-    <View style={{ width: width }}>
+    <View style={{ width: width }}
+          key={uuid.v1().toString()}>
       <Text variant={"titleSmall"}
             style={title}>
         {translate(titleLabel)}
       </Text>
-      <Svg viewBox="0 0 400 400"
+      <Svg viewBox="0 30 400 400"
            width="100%"
            height="100%">
         <VictoryPie
           standalone={false}
-          animate={{ duration: 1000 }}
+          animate={{ duration: 500 }}
           data={[{ x: 1, y: datesBooked }, { x: 2, y: 100 - datesBooked }]}
           innerRadius={120}
           cornerRadius={25}
@@ -30,7 +32,7 @@ function getProgressChart(width: number, datesBooked: number, titleLabel: TxKeyP
           style={{
             data: {
               fill: ({ datum }) => {
-                return datum.x === 1 ? "green" : "transparent"
+                return datum.x === 1 ? "#2bd63f" : "transparent"
               },
             },
           }}
@@ -40,14 +42,13 @@ function getProgressChart(width: number, datesBooked: number, titleLabel: TxKeyP
           verticalAnchor="middle"
           x={200}
           y={200}
-          text={`${Math.round(datesBooked)}%`}
+          text={`${datesBooked}%`}
           style={pieChartLabel}
         />
       </Svg>
     </View>
   )
 }
-
 
 function getMonthCharts(aThirdOfTheScreenSize: number, numberOfBookedDaysPerMonth: Map<number, number>) {
 
@@ -62,7 +63,8 @@ function getMonthCharts(aThirdOfTheScreenSize: number, numberOfBookedDaysPerMont
   return quarters.map(quarter => {
 
     return (
-      <View style={{ flexDirection: "row" }}>
+      <View style={quarterWrapper}
+            key={uuid.v1().toString()}>
         {quarter.map(month => {
           return getProgressChart(aThirdOfTheScreenSize, month[1], `charts.month_${month[0]}` as TxKeyPath)
         })}
@@ -86,14 +88,14 @@ export const BookingsChart = observer(function BookingsChart() {
   const numberOfDaysForThisYear = differenceInCalendarDays(new Date(today.getFullYear(), 11, 31), new Date(today.getFullYear(), 0, 1))
   const numberOfDaysDuringHighSeason = differenceInCalendarDays(new Date(today.getFullYear(), 7, 31), new Date(today.getFullYear(), 4, 1))
   const numberOfDaysDuringLowSeason = numberOfDaysForThisYear - numberOfDaysDuringHighSeason
-  const datesBookedDuringHighSeason = (datesDuringHighSeason.length / numberOfDaysDuringHighSeason) * 100
-  const datesBookedDuringLowSeason = (datesDuringLowSeason.length / numberOfDaysDuringLowSeason) * 100
+  const datesBookedDuringHighSeason = Math.round((datesDuringHighSeason.length / numberOfDaysDuringHighSeason) * 100)
+  const datesBookedDuringLowSeason = Math.round((datesDuringLowSeason.length / numberOfDaysDuringLowSeason) * 100)
 
   const numberOfBookedDaysPerMonth = new Map<number, number>()
   for (let i = 0; i < 12; i++) {
     const bookedDaysPerMonth = allBookingDates.filter(b => getMonth(b) === i).length
     const daysInMonth = getDaysInMonth(new Date(today.getFullYear(), i))
-    numberOfBookedDaysPerMonth.set(i, (bookedDaysPerMonth / daysInMonth) * 100)
+    numberOfBookedDaysPerMonth.set(i, Math.round((bookedDaysPerMonth / daysInMonth) * 100))
   }
 
   return (
@@ -116,13 +118,21 @@ const pieChartLabel: VictoryLabelStyleObject = {
 const wrapper: ViewStyle = {
   flexDirection: "row",
   height: 150,
+  marginBottom: 20,
+  marginTop: 10,
 }
 
 const wrapper2: ViewStyle = {
-  height: 100,
+  height: 620,
   paddingBottom: 5,
 }
 
 const title: ViewStyle = {
   alignSelf: "center",
+}
+
+const quarterWrapper: ViewStyle = {
+  flexDirection: "row",
+  height: 150,
+  marginBottom: 5,
 }
