@@ -24,6 +24,9 @@ import { setupReactotron } from "./services/reactotron"
 import { MD3LightTheme as DefaultTheme, Provider as PaperProvider } from "react-native-paper"
 import Config from "./config"
 import { MessagingHandler } from "./components"
+import {useColorScheme} from 'react-native';
+import lightThemeColors from './theme/paper-light-theme.json'
+import darkThemeColors from './theme/paper-dark-theme.json'
 
 // Set up Reactotron, which is a free desktop app for inspecting and debugging
 // React Native apps. Learn more here: https://github.com/infinitered/reactotron
@@ -63,13 +66,14 @@ const config = {
   },
 }
 
-const theme = {
+const lightTheme = {
   ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    // primary: 'tomato',
-    // secondary: 'yellow',
-  },
+  colors: lightThemeColors.colors,
+}
+
+const darkTheme = {
+  ...DefaultTheme,
+  colors: darkThemeColors.colors,
 }
 
 interface AppProps {
@@ -86,6 +90,7 @@ function App(props: AppProps) {
     onNavigationStateChange,
     isRestored: isNavigationStateRestored,
   } = useNavigationPersistence(storage, NAVIGATION_PERSISTENCE_KEY)
+  const colorScheme = useColorScheme();
 
   const [areFontsLoaded] = useFonts(customFontsToLoad)
 
@@ -115,7 +120,7 @@ function App(props: AppProps) {
   // otherwise, we're ready to render the app
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <PaperProvider>
+      <PaperProvider theme={colorScheme === 'light' ? lightTheme : darkTheme}>
         <ErrorBoundary catchErrors={Config.catchErrors}>
           <AppNavigator
             linking={linking}
