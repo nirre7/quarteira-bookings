@@ -3,53 +3,74 @@ import { Dimensions, ScrollView, View, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 import { VictoryLabel, VictoryPie } from "victory-native"
 import Svg from "react-native-svg"
-import { Text, ThemeBase, useTheme } from "react-native-paper"
+import { Card, ThemeBase, useTheme } from "react-native-paper"
 import { useStores } from "../models"
 import { differenceInCalendarDays, eachDayOfInterval, getDaysInMonth, getMonth } from "date-fns"
 import { translate, TxKeyPath } from "../i18n"
 import uuid from "react-native-uuid"
+import { spacing } from "../theme"
+import { MD3Theme } from "react-native-paper/src/types"
 
-function getProgressChart(width: number, datesBooked: number, titleLabel: TxKeyPath, theme: any) {
+enum ChartSize {
+  SMALL,
+  MEDIUM,
+  LARGE
+}
+
+function getProgressChart(width: number, datesBooked: number, titleLabel: TxKeyPath, theme: MD3Theme, chartSize: ChartSize = ChartSize.MEDIUM) {
+
+  let chartViewBox, cardHeight
+  if (chartSize === ChartSize.MEDIUM) {
+    chartViewBox = "0 65 410 410"
+    cardHeight = 200
+  } else if (chartSize === ChartSize.SMALL) {
+    chartViewBox = "0 90 400 400"
+    cardHeight = 150
+  } else {
+    throw new Error(`Not implemented : ${chartSize}`)
+  }
 
   return (
     <View style={{ width: width }}
           key={uuid.v1().toString()}>
-      <Text variant={"titleSmall"}
-            style={title}>
-        {translate(titleLabel)}
-      </Text>
-      <Svg viewBox="0 30 400 400"
-           width="100%"
-           height="100%">
-        <VictoryPie
-          standalone={false}
-          animate={{ duration: 500 }}
-          data={[{ x: 1, y: datesBooked }, { x: 2, y: 100 - datesBooked }]}
-          innerRadius={120}
-          cornerRadius={25}
-          labels={() => null}
-          style={{
-            data: {
-              fill: ({ datum }) => {
-                return datum.x === 1 ? "#04cf0b" : "transparent"
-              },
-            },
-          }}
-        />
-        <VictoryLabel
-          textAnchor="middle"
-          verticalAnchor="middle"
-          x={200}
-          y={200}
-          text={`${datesBooked}%`}
-          style={{ fontSize: 50, fill: theme.colors.onSurface }}
-        />
-      </Svg>
+      <Card mode={"contained"}
+            style={[card, {height: cardHeight}]}>
+        <Card.Title title={translate(titleLabel)} ></Card.Title>
+        <Card.Content>
+          <Svg viewBox={chartViewBox}
+               width="100%"
+               height="100%">
+            <VictoryPie
+              standalone={false}
+              animate={{ duration: 500 }}
+              data={[{ x: 1, y: datesBooked }, { x: 2, y: 100 - datesBooked }]}
+              innerRadius={120}
+              cornerRadius={25}
+              labels={() => null}
+              style={{
+                data: {
+                  fill: ({ datum }) => {
+                    return datum.x === 1 ? "#04cf0b" : "transparent"
+                  },
+                },
+              }}
+            />
+            <VictoryLabel
+              textAnchor="middle"
+              verticalAnchor="middle"
+              x={200}
+              y={200}
+              text={`${datesBooked}%`}
+              style={{ fontSize: 50, fill: theme.colors.onSurface }}
+            />
+          </Svg>
+        </Card.Content>
+      </Card>
     </View>
   )
 }
 
-function getMonthCharts(aThirdOfTheScreenSize: number, numberOfBookedDaysPerMonth: Map<number, number>, theme: ThemeBase) {
+function getMonthCharts(aThirdOfTheScreenSize: number, numberOfBookedDaysPerMonth: Map<number, number>, theme: MD3Theme) {
 
   const chunkSize = 3
   const quarters = []
@@ -65,7 +86,7 @@ function getMonthCharts(aThirdOfTheScreenSize: number, numberOfBookedDaysPerMont
       <View style={quarterWrapper}
             key={uuid.v1().toString()}>
         {quarter.map(month => {
-          return getProgressChart(aThirdOfTheScreenSize, month[1], `charts.month_${month[0]}` as TxKeyPath, theme)
+          return getProgressChart(aThirdOfTheScreenSize, month[1], `charts.month_${month[0]}` as TxKeyPath, theme, ChartSize.SMALL)
         })}
       </View>
     )
@@ -99,7 +120,7 @@ export const BookingsChart = observer(function BookingsChart() {
   }
 
   return (
-    <ScrollView style={{ backgroundColor: theme.colors.background }}>
+    <ScrollView style={{ backgroundColor: theme.colors.background }} showsVerticalScrollIndicator={false}>
       <View style={wrapper}>
         {getProgressChart(halfScreenSize, datesBookedDuringHighSeason, "charts.highSeasonTitle", theme)}
         {getProgressChart(halfScreenSize, datesBookedDuringLowSeason, "charts.lowSeasonTitle", theme)}
@@ -113,22 +134,19 @@ export const BookingsChart = observer(function BookingsChart() {
 
 const wrapper: ViewStyle = {
   flexDirection: "row",
-  height: 150,
-  marginBottom: 20,
-  marginTop: 10,
+  marginBottom: spacing.tiny,
+  marginTop: spacing.tiny,
 }
 
 const wrapper2: ViewStyle = {
-  height: 620,
-  paddingBottom: 5,
 }
 
-const title: ViewStyle = {
-  alignSelf: "center",
+const card: ViewStyle = {
+  marginLeft: spacing.tiny,
+  marginRight: spacing.tiny,
 }
 
 const quarterWrapper: ViewStyle = {
   flexDirection: "row",
-  height: 150,
-  marginBottom: 5,
+  marginBottom: spacing.tiny,
 }
