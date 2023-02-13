@@ -47,7 +47,7 @@ export const BookingsCalendar = observer(function BookingsCalendar() {
         futureScrollRange={11}
         theme={{
           backgroundColor: theme.colors.background,
-          calendarBackground: theme.colors.background,
+          calendarBackground: theme.colors.surfaceVariant,
           monthTextColor: theme.colors.onSurface,
           dayTextColor: theme.colors.onSurface,
         }}
