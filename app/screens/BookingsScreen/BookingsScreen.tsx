@@ -39,7 +39,7 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
 
   return (
     <View style={wrapper}>
-      <Appbar.Header>
+      <Appbar.Header elevated={true}>
         <Appbar.Content title={"Quarteria Bookings"}></Appbar.Content>
       </Appbar.Header>
       <View style={wrapper}>
