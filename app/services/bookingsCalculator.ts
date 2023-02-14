@@ -64,7 +64,7 @@ export function getIncomeForMonth(month: number, numberOfBookedDaysPerMonth: Map
   }
 
   const incomeForMonthInEuro = incomePerNightPerMonthInEuro.get(month) * (numberOfDaysBooked - 1)
-  return incomeForMonthInEuro * 0.75
+  return Math.round(incomeForMonthInEuro * 0.75)
 }
 
 export function getIncomeForMonthForChart(month: number, numberOfBookedDaysPerMonth: Map<number, number>): string {
