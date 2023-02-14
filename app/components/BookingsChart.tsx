@@ -3,13 +3,21 @@ import { Dimensions, ScrollView, View, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 import { VictoryLabel, VictoryPie } from "victory-native"
 import Svg from "react-native-svg"
-import { Card, ThemeBase, useTheme } from "react-native-paper"
+import { Card, useTheme } from "react-native-paper"
 import { useStores } from "../models"
-import { differenceInCalendarDays, eachDayOfInterval, getDaysInMonth, getMonth } from "date-fns"
 import { translate, TxKeyPath } from "../i18n"
 import uuid from "react-native-uuid"
 import { spacing } from "../theme"
 import { MD3Theme } from "react-native-paper/src/types"
+import {
+  getAllBookings,
+  getDatesBookedDuringHigAndLowSeasonInPercent,
+  getDaysForMonth,
+  getIncomeForHighSeasonForChart,
+  getIncomeForLowSeasonForChart,
+  getIncomeForMonthForChart,
+  getNumberOfBookingsPerMonth,
+} from "../services/bookingsCalculator"
 
 enum ChartSize {
   SMALL,
@@ -17,7 +25,16 @@ enum ChartSize {
   LARGE
 }
 
-function getProgressChart(width: number, datesBooked: number, titleLabel: TxKeyPath, theme: MD3Theme, chartSize: ChartSize = ChartSize.MEDIUM) {
+const halfScreenSize = Dimensions.get("screen").width / 2
+const aThirdOfTheScreenSize = Dimensions.get("screen").width / 3
+
+function getProgressChart(
+  width: number,
+  bookedPercentage: number,
+  titleLabel: TxKeyPath,
+  theme: MD3Theme,
+  chartSize: ChartSize,
+  approximateIncome = "0 €") {
 
   let chartViewBox, cardHeight
   if (chartSize === ChartSize.MEDIUM) {
@@ -31,11 +48,12 @@ function getProgressChart(width: number, datesBooked: number, titleLabel: TxKeyP
   }
 
   return (
-    <View style={{ width: width }}
+    <View style={{ width }}
           key={uuid.v1().toString()}>
       <Card mode={"contained"}
-            style={[card, {height: cardHeight}]}>
-        <Card.Title title={translate(titleLabel)} ></Card.Title>
+            style={[card, { height: cardHeight }]}>
+        <Card.Title title={translate(titleLabel)}
+                    subtitle={approximateIncome}></Card.Title>
         <Card.Content>
           <Svg viewBox={chartViewBox}
                width="100%"
@@ -43,7 +61,10 @@ function getProgressChart(width: number, datesBooked: number, titleLabel: TxKeyP
             <VictoryPie
               standalone={false}
               animate={{ duration: 500 }}
-              data={[{ x: 1, y: datesBooked }, { x: 2, y: 100 - datesBooked }]}
+              data={[
+                { x: 1, y: bookedPercentage },
+                { x: 2, y: 100 - bookedPercentage },
+              ]}
               innerRadius={120}
               cornerRadius={25}
               labels={() => null}
@@ -60,8 +81,11 @@ function getProgressChart(width: number, datesBooked: number, titleLabel: TxKeyP
               verticalAnchor="middle"
               x={200}
               y={200}
-              text={`${datesBooked}%`}
-              style={{ fontSize: 50, fill: theme.colors.onSurface }}
+              text={`${bookedPercentage}%`}
+              style={[
+                chartLabel,
+                { fill: theme.colors.onSurface },
+              ]}
             />
           </Svg>
         </Card.Content>
@@ -86,7 +110,14 @@ function getMonthCharts(aThirdOfTheScreenSize: number, numberOfBookedDaysPerMont
       <View style={quarterWrapper}
             key={uuid.v1().toString()}>
         {quarter.map(month => {
-          return getProgressChart(aThirdOfTheScreenSize, month[1], `charts.month_${month[0]}` as TxKeyPath, theme, ChartSize.SMALL)
+          return getProgressChart(
+            aThirdOfTheScreenSize,
+            Math.round((month[1] / getDaysForMonth(month[0])) * 100),
+            `charts.month_${month[0]}` as TxKeyPath,
+            theme,
+            ChartSize.SMALL,
+            getIncomeForMonthForChart(month[0], numberOfBookedDaysPerMonth),
+          )
         })}
       </View>
     )
@@ -97,36 +128,23 @@ export const BookingsChart = observer(function BookingsChart() {
   const { bookingStore } = useStores()
   const theme = useTheme()
 
-  const halfScreenSize = Dimensions.get("screen").width / 2
-  const aThirdOfTheScreenSize = Dimensions.get("screen").width / 3
 
-  const today = new Date()
   const bookings = bookingStore.activeBookings
-  const allBookingDates = bookings.flatMap(b => eachDayOfInterval({ start: b.start, end: b.end }))
-  const datesDuringHighSeason = allBookingDates.filter(b => getMonth(b) === 5 || getMonth(b) === 6 || getMonth(b) === 7)
-  const datesDuringLowSeason = allBookingDates.filter(b => getMonth(b) !== 5 && getMonth(b) !== 6 && getMonth(b) !== 7)
-
-  const numberOfDaysForThisYear = differenceInCalendarDays(new Date(today.getFullYear(), 11, 31), new Date(today.getFullYear(), 0, 1))
-  const numberOfDaysDuringHighSeason = differenceInCalendarDays(new Date(today.getFullYear(), 7, 31), new Date(today.getFullYear(), 4, 1))
-  const numberOfDaysDuringLowSeason = numberOfDaysForThisYear - numberOfDaysDuringHighSeason
-  const datesBookedDuringHighSeason = Math.round((datesDuringHighSeason.length / numberOfDaysDuringHighSeason) * 100)
-  const datesBookedDuringLowSeason = Math.round((datesDuringLowSeason.length / numberOfDaysDuringLowSeason) * 100)
-
-  const numberOfBookedDaysPerMonth = new Map<number, number>()
-  for (let i = 0; i < 12; i++) {
-    const bookedDaysPerMonth = allBookingDates.filter(b => getMonth(b) === i).length
-    const daysInMonth = getDaysInMonth(new Date(today.getFullYear(), i))
-    numberOfBookedDaysPerMonth.set(i, Math.round((bookedDaysPerMonth / daysInMonth) * 100))
-  }
+  const allBookingDates = getAllBookings(bookings)
+  const {
+    lowSeasonBookingsInPercent,
+    highSeasonBookingsInPercent,
+  } = getDatesBookedDuringHigAndLowSeasonInPercent(allBookingDates)
+  const numberOfBookedDaysPerMonth = getNumberOfBookingsPerMonth(allBookingDates)
 
   return (
     <ScrollView style={{ backgroundColor: theme.colors.background }} showsVerticalScrollIndicator={false}>
       <View style={wrapper}>
-        {getProgressChart(halfScreenSize, datesBookedDuringHighSeason, "charts.highSeasonTitle", theme)}
-        {getProgressChart(halfScreenSize, datesBookedDuringLowSeason, "charts.lowSeasonTitle", theme)}
+        {getProgressChart(halfScreenSize, highSeasonBookingsInPercent, "charts.highSeasonTitle", theme, ChartSize.MEDIUM, getIncomeForHighSeasonForChart(numberOfBookedDaysPerMonth))}
+        {getProgressChart(halfScreenSize, lowSeasonBookingsInPercent, "charts.lowSeasonTitle", theme, ChartSize.MEDIUM, getIncomeForLowSeasonForChart(numberOfBookedDaysPerMonth))}
       </View>
       <View style={wrapper2}>
-        {getMonthCharts(aThirdOfTheScreenSize, numberOfBookedDaysPerMonth, theme)}
+        {getMonthCharts(aThirdOfTheScreenSize, getNumberOfBookingsPerMonth(allBookingDates), theme)}
       </View>
     </ScrollView>
   )
@@ -138,8 +156,7 @@ const wrapper: ViewStyle = {
   marginTop: spacing.tiny,
 }
 
-const wrapper2: ViewStyle = {
-}
+const wrapper2: ViewStyle = {}
 
 const card: ViewStyle = {
   marginLeft: spacing.tiny,
@@ -149,4 +166,8 @@ const card: ViewStyle = {
 const quarterWrapper: ViewStyle = {
   flexDirection: "row",
   marginBottom: spacing.tiny,
+}
+
+const chartLabel = {
+  fontSize: 50,
 }
