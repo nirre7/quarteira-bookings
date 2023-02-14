@@ -1,9 +1,9 @@
 import * as React from "react"
-import { Dimensions, ScrollView, View, ViewStyle } from "react-native"
+import { Dimensions, ScrollView, TextStyle, View, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 import { VictoryLabel, VictoryPie } from "victory-native"
 import Svg from "react-native-svg"
-import { Card, useTheme } from "react-native-paper"
+import { Card, Text, useTheme } from "react-native-paper"
 import { useStores } from "../models"
 import { translate, TxKeyPath } from "../i18n"
 import uuid from "react-native-uuid"
@@ -17,6 +17,7 @@ import {
   getIncomeForLowSeasonForChart,
   getIncomeForMonthForChart,
   getNumberOfBookingsPerMonth,
+  getTotalIncome,
 } from "../services/bookingsCalculator"
 
 enum ChartSize {
@@ -128,17 +129,26 @@ export const BookingsChart = observer(function BookingsChart() {
   const { bookingStore } = useStores()
   const theme = useTheme()
 
-
   const bookings = bookingStore.activeBookings
   const allBookingDates = getAllBookings(bookings)
+
   const {
     lowSeasonBookingsInPercent,
     highSeasonBookingsInPercent,
   } = getDatesBookedDuringHigAndLowSeasonInPercent(allBookingDates)
   const numberOfBookedDaysPerMonth = getNumberOfBookingsPerMonth(allBookingDates)
+  const totalIncome = getTotalIncome(numberOfBookedDaysPerMonth)
 
   return (
     <ScrollView style={{ backgroundColor: theme.colors.background }} showsVerticalScrollIndicator={false}>
+      <Card mode={"contained"}
+            style={card}>
+        <Card.Content>
+          <Text variant={"displayMedium"}>
+            {totalIncome}
+          </Text>
+        </Card.Content>
+      </Card>
       <View style={wrapper}>
         {getProgressChart(halfScreenSize, highSeasonBookingsInPercent, "charts.highSeasonTitle", theme, ChartSize.MEDIUM, getIncomeForHighSeasonForChart(numberOfBookedDaysPerMonth))}
         {getProgressChart(halfScreenSize, lowSeasonBookingsInPercent, "charts.lowSeasonTitle", theme, ChartSize.MEDIUM, getIncomeForLowSeasonForChart(numberOfBookedDaysPerMonth))}
@@ -170,4 +180,8 @@ const quarterWrapper: ViewStyle = {
 
 const chartLabel = {
   fontSize: 50,
+}
+
+const totalIncomeStyle: TextStyle = {
+  textAlign: "center",
 }

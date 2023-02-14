@@ -85,4 +85,9 @@ function getIncomeForSeason(months: number[], numberOfBookedDaysPerMonth: Map<nu
   return months.reduce((result, month) => result + getIncomeForMonth(month, numberOfBookedDaysPerMonth), 0)
 }
 
+export function getTotalIncome(numberOfBookedDaysPerMonth: Map<number, number>) {
+  const totalIncome = getIncomeForSeason(lowSeasonMonths.concat(highSeasonMonths), numberOfBookedDaysPerMonth)
+  return `${totalIncome} ${currency}`
+}
+
 
