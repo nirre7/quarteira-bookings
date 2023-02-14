@@ -4,6 +4,7 @@ import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firest
 import { withSetPropAction } from "./helpers/withSetPropAction"
 import { BookingStatus } from "./booking-status"
 import { isAfter } from "date-fns"
+import { translate } from "../i18n"
 
 export const BookingStoreModel = types
   .model("BookingStore")
@@ -30,8 +31,21 @@ export const BookingStoreModel = types
     },
   }))
   .views((store) => ({
-    get activeBookings() {
+    get activeBookings(): Booking[] {
       return store.bookings.filter(b => b.status === BookingStatus.ACTIVE)
+    },
+    get sortedActiveAndRemovedBookings(): (Booking | string)[] {
+      const activeBookings = this.activeBookings
+      const removedBookings = store.bookings
+        .filter(b => b.status === BookingStatus.REMOVED)
+        .sort((b1, b2) => isAfter(b1.modified, b2.modified) ? 1 : -1)
+
+      return [
+        translate("bookingScreen.active"),
+        ...activeBookings,
+        translate("bookingScreen.removed"),
+        ...removedBookings,
+      ]
     },
   }))
 
