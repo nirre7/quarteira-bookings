@@ -140,11 +140,13 @@ export const BookingsChart = observer(function BookingsChart() {
   const totalIncome = getTotalIncome(numberOfBookedDaysPerMonth)
 
   return (
-    <ScrollView style={{ backgroundColor: theme.colors.background }} showsVerticalScrollIndicator={false}>
+    <ScrollView style={{ backgroundColor: theme.colors.background }}
+                showsVerticalScrollIndicator={false}>
       <Card mode={"contained"}
-            style={card}>
+            style={totalIncomeCard}>
         <Card.Content>
-          <Text variant={"displayMedium"}>
+          <Text variant={"displayMedium"}
+                style={totalIncomeStyle}>
             {totalIncome}
           </Text>
         </Card.Content>
@@ -184,4 +186,9 @@ const chartLabel = {
 
 const totalIncomeStyle: TextStyle = {
   textAlign: "center",
+}
+
+const totalIncomeCard: ViewStyle = {
+  ...card,
+  marginTop: spacing.tiny
 }
