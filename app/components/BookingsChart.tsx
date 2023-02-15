@@ -72,7 +72,7 @@ function getProgressChart(
               style={{
                 data: {
                   fill: ({ datum }) => {
-                    return datum.x === 1 ? "#04cf0b" : "transparent"
+                    return datum.x === 1 ? theme.colors.tertiary : "transparent"
                   },
                 },
               }}

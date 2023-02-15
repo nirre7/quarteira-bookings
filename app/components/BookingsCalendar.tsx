@@ -6,8 +6,9 @@ import { CalendarList } from "react-native-calendars"
 import { eachDayOfInterval, formatISO, startOfYear } from "date-fns"
 import { useStores } from "../models"
 import { useTheme } from "react-native-paper"
+import { MD3Theme } from "react-native-paper/src/types"
 
-function createBookingPeriods(bookings: Booking[]) {
+function createBookingPeriods(bookings: Booking[], theme: MD3Theme) {
   const markedDates = {}
 
   bookings.forEach(b => {
@@ -21,7 +22,7 @@ function createBookingPeriods(bookings: Booking[]) {
         startingDay: index === 0,
         endingDay: index + 1 === bookingDates.length,
         selected: true,
-        color: "#04b009",
+        color: theme.colors.tertiary,
         textColor: "grey",
       }
     })
@@ -35,7 +36,7 @@ function createBookingPeriods(bookings: Booking[]) {
 export const BookingsCalendar = observer(function BookingsCalendar() {
   const { bookingStore } = useStores()
   const theme = useTheme()
-  const markedDates = createBookingPeriods(bookingStore.activeBookings)
+  const markedDates = createBookingPeriods(bookingStore.activeBookings, theme)
 
   return (
     <View>
