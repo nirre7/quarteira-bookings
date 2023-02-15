@@ -83,10 +83,7 @@ function getProgressChart(
               x={200}
               y={200}
               text={`${bookedPercentage}%`}
-              style={[
-                chartLabel,
-                { fill: theme.colors.onSurface },
-              ]}
+              style={{ fill: theme.colors.onSurface, ...chartLabel }}
             />
           </Svg>
         </Card.Content>
@@ -190,5 +187,5 @@ const totalIncomeStyle: TextStyle = {
 
 const totalIncomeCard: ViewStyle = {
   ...card,
-  marginTop: spacing.tiny
+  marginTop: spacing.tiny,
 }
