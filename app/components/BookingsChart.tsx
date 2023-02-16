@@ -54,6 +54,7 @@ function getProgressChart(
       <Card mode={"contained"}
             style={[card, { height: cardHeight }]}>
         <Card.Title title={translate(titleLabel)}
+                    subtitleStyle={{color: theme.colors.primary}}
                     subtitle={approximateIncome}></Card.Title>
         <Card.Content>
           <Svg viewBox={chartViewBox}
@@ -72,7 +73,7 @@ function getProgressChart(
               style={{
                 data: {
                   fill: ({ datum }) => {
-                    return datum.x === 1 ? theme.colors.tertiary : "transparent"
+                    return datum.x === 1 ? theme.colors.primary : "transparent"
                   },
                 },
               }}
@@ -83,7 +84,7 @@ function getProgressChart(
               x={200}
               y={200}
               text={`${bookedPercentage}%`}
-              style={{ fill: theme.colors.onSurface, ...chartLabel }}
+              style={{ fill: theme.colors.primary, ...chartLabel }}
             />
           </Svg>
         </Card.Content>
@@ -143,7 +144,7 @@ export const BookingsChart = observer(function BookingsChart() {
             style={totalIncomeCard}>
         <Card.Content>
           <Text variant={"displayMedium"}
-                style={totalIncomeStyle}>
+                style={[totalIncomeStyle, { color: theme.colors.primary }]}>
             {totalIncome}
           </Text>
         </Card.Content>

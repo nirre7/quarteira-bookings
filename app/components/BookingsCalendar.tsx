@@ -22,8 +22,8 @@ function createBookingPeriods(bookings: Booking[], theme: MD3Theme) {
         startingDay: index === 0,
         endingDay: index + 1 === bookingDates.length,
         selected: true,
-        color: theme.colors.tertiary,
-        textColor: "grey",
+        color: theme.colors.primary,
+        textColor: theme.colors.inverseOnSurface,
       }
     })
   })
@@ -46,11 +46,12 @@ export const BookingsCalendar = observer(function BookingsCalendar() {
         markedDates={markedDates}
         pastScrollRange={0}
         futureScrollRange={11}
+        style={{backgroundColor: theme.colors.background}}
         theme={{
-          backgroundColor: theme.colors.background,
           calendarBackground: theme.colors.surfaceVariant,
           monthTextColor: theme.colors.onSurface,
           dayTextColor: theme.colors.onSurface,
+          todayTextColor: theme.colors.primary,
         }}
       />
     </View>
