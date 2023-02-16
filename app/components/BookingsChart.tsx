@@ -35,7 +35,8 @@ function getProgressChart(
   titleLabel: TxKeyPath,
   theme: MD3Theme,
   chartSize: ChartSize,
-  approximateIncome = "0 €") {
+  approximateIncome = "0 €",
+  cardStyle: ViewStyle) {
 
   let chartViewBox, cardHeight
   if (chartSize === ChartSize.MEDIUM) {
@@ -52,9 +53,9 @@ function getProgressChart(
     <View style={{ width }}
           key={uuid.v1().toString()}>
       <Card mode={"contained"}
-            style={[card, { height: cardHeight }]}>
+            style={[cardStyle, { height: cardHeight }]}>
         <Card.Title title={translate(titleLabel)}
-                    subtitleStyle={{color: theme.colors.primary}}
+                    subtitleStyle={{ color: theme.colors.primary }}
                     subtitle={approximateIncome}></Card.Title>
         <Card.Content>
           <Svg viewBox={chartViewBox}
@@ -108,7 +109,7 @@ function getMonthCharts(aThirdOfTheScreenSize: number, numberOfBookedDaysPerMont
     return (
       <View style={quarterWrapper}
             key={uuid.v1().toString()}>
-        {quarter.map(month => {
+        {quarter.map((month, index) => {
           return getProgressChart(
             aThirdOfTheScreenSize,
             Math.round((month[1] / getDaysForMonth(month[0])) * 100),
@@ -116,6 +117,7 @@ function getMonthCharts(aThirdOfTheScreenSize: number, numberOfBookedDaysPerMont
             theme,
             ChartSize.SMALL,
             getIncomeForMonthForChart(month[0], numberOfBookedDaysPerMonth),
+            index === 1 ? {} : card,
           )
         })}
       </View>
@@ -150,8 +152,8 @@ export const BookingsChart = observer(function BookingsChart() {
         </Card.Content>
       </Card>
       <View style={wrapper}>
-        {getProgressChart(halfScreenSize, highSeasonBookingsInPercent, "charts.highSeasonTitle", theme, ChartSize.MEDIUM, getIncomeForHighSeasonForChart(numberOfBookedDaysPerMonth))}
-        {getProgressChart(halfScreenSize, lowSeasonBookingsInPercent, "charts.lowSeasonTitle", theme, ChartSize.MEDIUM, getIncomeForLowSeasonForChart(numberOfBookedDaysPerMonth))}
+        {getProgressChart(halfScreenSize, highSeasonBookingsInPercent, "charts.highSeasonTitle", theme, ChartSize.MEDIUM, getIncomeForHighSeasonForChart(numberOfBookedDaysPerMonth), mediumCardLeft)}
+        {getProgressChart(halfScreenSize, lowSeasonBookingsInPercent, "charts.lowSeasonTitle", theme, ChartSize.MEDIUM, getIncomeForLowSeasonForChart(numberOfBookedDaysPerMonth), mediumCardRight)}
       </View>
       <View style={wrapper2}>
         {getMonthCharts(aThirdOfTheScreenSize, getNumberOfBookingsPerMonth(allBookingDates), theme)}
@@ -162,20 +164,30 @@ export const BookingsChart = observer(function BookingsChart() {
 
 const wrapper: ViewStyle = {
   flexDirection: "row",
-  marginBottom: spacing.tiny,
-  marginTop: spacing.tiny,
+  marginBottom: spacing.extraSmall,
+  marginTop: spacing.extraSmall,
 }
 
 const wrapper2: ViewStyle = {}
 
-const card: ViewStyle = {
-  marginLeft: spacing.tiny,
+const mediumCardLeft: ViewStyle = {
+  marginLeft: spacing.extraSmall,
   marginRight: spacing.tiny,
+}
+
+const mediumCardRight: ViewStyle = {
+  marginLeft: spacing.tiny,
+  marginRight: spacing.extraSmall,
+}
+
+const card: ViewStyle = {
+  marginLeft: spacing.extraSmall,
+  marginRight: spacing.extraSmall,
 }
 
 const quarterWrapper: ViewStyle = {
   flexDirection: "row",
-  marginBottom: spacing.tiny,
+  marginBottom: spacing.extraSmall,
 }
 
 const chartLabel = {
@@ -188,5 +200,7 @@ const totalIncomeStyle: TextStyle = {
 
 const totalIncomeCard: ViewStyle = {
   ...card,
-  marginTop: spacing.tiny,
+  marginTop: spacing.extraSmall,
+  marginLeft: spacing.extraSmall,
+  marginRight: spacing.extraSmall,
 }
