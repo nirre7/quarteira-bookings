@@ -38,13 +38,15 @@ function getProgressChart(
   approximateIncome = "0 €",
   cardStyle: ViewStyle) {
 
-  let chartViewBox, cardHeight
+  let chartViewBox, cardHeight, innerRadius
   if (chartSize === ChartSize.MEDIUM) {
     chartViewBox = "0 65 410 410"
-    cardHeight = 200
+    cardHeight = 220
+    innerRadius = 120
   } else if (chartSize === ChartSize.SMALL) {
     chartViewBox = "0 90 400 400"
-    cardHeight = 150
+    cardHeight = 170
+    innerRadius = 125
   } else {
     throw new Error(`Not implemented : ${chartSize}`)
   }
@@ -56,7 +58,8 @@ function getProgressChart(
             style={[cardStyle, { height: cardHeight }]}>
         <Card.Title title={translate(titleLabel)}
                     subtitleStyle={{ color: theme.colors.primary }}
-                    subtitle={approximateIncome}></Card.Title>
+                    subtitle={approximateIncome}>
+        </Card.Title>
         <Card.Content>
           <Svg viewBox={chartViewBox}
                width="100%"
@@ -65,10 +68,10 @@ function getProgressChart(
               standalone={false}
               animate={{ duration: 500 }}
               data={[
-                { x: 1, y: bookedPercentage },
-                { x: 2, y: 100 - bookedPercentage },
+                { x: 1, y: 99 },
+                { x: 2, y: 100 - 99 },
               ]}
-              innerRadius={120}
+              innerRadius={innerRadius}
               cornerRadius={25}
               labels={() => null}
               style={{
@@ -110,6 +113,16 @@ function getMonthCharts(aThirdOfTheScreenSize: number, numberOfBookedDaysPerMont
       <View style={quarterWrapper}
             key={uuid.v1().toString()}>
         {quarter.map((month, index) => {
+
+          let cardStyle
+          if (index === 0) {
+            cardStyle = smallCardLeft
+          } else if (index === 2) {
+            cardStyle = smallCardRight
+          } else {
+            cardStyle = middleCard
+          }
+
           return getProgressChart(
             aThirdOfTheScreenSize,
             Math.round((month[1] / getDaysForMonth(month[0])) * 100),
@@ -117,7 +130,7 @@ function getMonthCharts(aThirdOfTheScreenSize: number, numberOfBookedDaysPerMont
             theme,
             ChartSize.SMALL,
             getIncomeForMonthForChart(month[0], numberOfBookedDaysPerMonth),
-            index === 1 ? {} : card,
+            cardStyle,
           )
         })}
       </View>
@@ -180,9 +193,19 @@ const mediumCardRight: ViewStyle = {
   marginRight: spacing.extraSmall,
 }
 
-const card: ViewStyle = {
+const smallCardLeft: ViewStyle = {
   marginLeft: spacing.extraSmall,
+  marginRight: spacing.tiny,
+}
+
+const smallCardRight: ViewStyle = {
+  marginLeft: spacing.tiny,
   marginRight: spacing.extraSmall,
+}
+
+const middleCard: ViewStyle = {
+  marginLeft: spacing.tiny + 2,
+  marginRight: spacing.tiny + 2,
 }
 
 const quarterWrapper: ViewStyle = {
@@ -199,7 +222,6 @@ const totalIncomeStyle: TextStyle = {
 }
 
 const totalIncomeCard: ViewStyle = {
-  ...card,
   marginTop: spacing.extraSmall,
   marginLeft: spacing.extraSmall,
   marginRight: spacing.extraSmall,
