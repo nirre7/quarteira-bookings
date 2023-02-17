@@ -27,6 +27,8 @@ const en = {
     back: "Back",
     start: "Start",
     end: "End",
+    modified: "Modified",
+    created: "Created",
   },
   bookingScreen: {
     active: "Active",

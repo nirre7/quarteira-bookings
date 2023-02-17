@@ -35,6 +35,7 @@ export const BookingList = observer(function BookingList() {
 
             const textStyle = getTextStyle(item.status)
             const cardStyle = getCardStyle(item.status)
+            const isBookingActive = item.status === BookingStatus.ACTIVE
 
             return (
               <Card
@@ -60,6 +61,16 @@ export const BookingList = observer(function BookingList() {
                       <Text
                         style={textStyle}>
                         {formatISO(item.end, { representation: "date" })}
+                      </Text>
+                    </View>
+                    <View>
+                      <Text variant="titleSmall"
+                            style={textStyle}>
+                        {translate(isBookingActive ? "common.created" : "common.modified")}
+                      </Text>
+                      <Text
+                        style={textStyle}>
+                        {formatISO(isBookingActive ? item.created : item.modified, { representation: "date" })}
                       </Text>
                     </View>
                   </View>
