@@ -68,8 +68,8 @@ function getProgressChart(
               standalone={false}
               animate={{ duration: 500 }}
               data={[
-                { x: 1, y: 99 },
-                { x: 2, y: 100 - 99 },
+                { x: 1, y: bookedPercentage },
+                { x: 2, y: 100 - bookedPercentage },
               ]}
               innerRadius={innerRadius}
               cornerRadius={25}
