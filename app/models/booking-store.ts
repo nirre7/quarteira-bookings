@@ -15,7 +15,8 @@ export const BookingStoreModel = types
   .actions(withSetPropAction)
   .actions((store) => ({
     async getBookings() {
-      // TODO add sorting from db
+
+      store.setProp('loading', true)
       const bookingsFromDb = await firestore().collection("bookings").get()
       const bookings = (bookingsFromDb.docs.map(doc => doc.data()) as unknown as Booking[])
       bookings.forEach(b => {
@@ -28,6 +29,8 @@ export const BookingStoreModel = types
       bookings.sort((b1, b2) => isAfter(b1.start, b2.start) ? 1 : -1)
 
       store.setProp("bookings", bookings)
+      store.setProp('loading', false)
+      __DEV__ && console.tron.debug('Done getting bookings.')
     },
   }))
   .views((store) => ({

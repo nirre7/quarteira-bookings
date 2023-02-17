@@ -41,6 +41,12 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
     <View style={wrapper}>
       <Appbar.Header elevated={true}>
         <Appbar.Content title={"Quarteria Bookings"}></Appbar.Content>
+        <Appbar.Action icon="sync"
+                       disabled={bookingStore.loading}
+                       onPress={() => {
+                         bookingStore.getBookings()
+                       }}
+                       animated={true} />
       </Appbar.Header>
       <View style={wrapper}>
         <BookingTabs />
