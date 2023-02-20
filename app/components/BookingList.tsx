@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Dimensions, TextStyle, View, ViewStyle } from "react-native"
+import { TextStyle, View, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
 import { FlashList } from "@shopify/flash-list"
 import { Booking } from "../models/booking"
@@ -21,10 +21,7 @@ export const BookingList = observer(function BookingList() {
   const getCardStyle = (status: BookingStatus): ViewStyle => (status === BookingStatus.REMOVED ? { backgroundColor: theme.colors.errorContainer } : { backgroundColor: theme.colors.secondaryContainer })
 
   return (
-    <View style={{
-      width: Dimensions.get("screen").width,
-      height: Dimensions.get("screen").height,
-    }}>
+    <View style={wrapper}>
       <FlashList
         data={bookingStore.sortedActiveAndRemovedBookings}
         renderItem={({ item }: { item: Booking | string }) => {
@@ -103,5 +100,9 @@ const header: TextStyle = {
   textAlign: "center",
   marginTop: spacing.small,
   marginBottom: spacing.extraSmall,
+}
+
+const wrapper: ViewStyle = {
+  flex: 1,
 }
 
