@@ -157,6 +157,8 @@ export const BookingsChart = observer(function BookingsChart() {
                 showsVerticalScrollIndicator={false}>
       <Card mode={"contained"}
             style={totalIncomeCard}>
+        <Card.Title title={translate('bookingScreen.approximateIncome')}
+                    titleStyle={totalIncomeStyle}></Card.Title>
         <Card.Content>
           <Text variant={"displayMedium"}
                 style={[totalIncomeStyle, { color: theme.colors.primary }]}>

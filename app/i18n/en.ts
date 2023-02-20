@@ -32,7 +32,8 @@ const en = {
   },
   bookingScreen: {
     active: "Active",
-    removed: "Removed"
+    removed: "Removed",
+    approximateIncome: "Approximate income",
   },
   welcomeScreen: {
     postscript:
