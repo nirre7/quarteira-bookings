@@ -9,6 +9,7 @@ import { formatISO } from "date-fns"
 import { translate } from "../i18n"
 import { spacing } from "../theme"
 import { BookingStatus } from "../models/booking-status"
+import { getIncomeForList } from "../services/bookingsCalculator"
 
 /**
  * Shows bookings in a list
@@ -60,6 +61,18 @@ export const BookingList = observer(function BookingList() {
                         {formatISO(item.end, { representation: "date" })}
                       </Text>
                     </View>
+                    {isBookingActive &&
+                      <View>
+                        <Text variant="titleSmall"
+                              style={textStyle}>
+                          {translate("common.income")}
+                        </Text>
+                        <Text
+                          style={textStyle}>
+                          {getIncomeForList(item.start, item.end)}
+                        </Text>
+                      </View>
+                    }
                     <View>
                       <Text variant="titleSmall"
                             style={textStyle}>

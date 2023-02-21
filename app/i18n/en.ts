@@ -29,11 +29,11 @@ const en = {
     end: "End",
     modified: "Modified",
     created: "Created",
+    income: "Income",
   },
   bookingScreen: {
     active: "Active",
     removed: "Removed",
-    approximateIncome: "Approximate income",
   },
   welcomeScreen: {
     postscript:

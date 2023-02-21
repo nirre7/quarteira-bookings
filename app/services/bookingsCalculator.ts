@@ -6,7 +6,10 @@ const currency = "€"
 const highSeasonMonths: number[] = [5, 6, 7]
 const lowSeasonMonths: number[] = [0, 1, 2, 3, 4, 8, 9, 10, 11]
 
-const incomePerNightPerMonthInEuro: Map<number, number> = new Map([
+/**
+ * The real income will differ a lot from this so think of this as an approximate and nothing else!
+ */
+const approximateIncomePerNightPerMonthInEuro: Map<number, number> = new Map([
   [0, 181],
   [1, 181],
   [2, 205],
@@ -56,6 +59,10 @@ export function getDatesBookedDuringHigAndLowSeasonInPercent(allBookingDates: Da
   }
 }
 
+function getIncomeWithoutPropertyManagementFees(incomeForMonthInEuro: number) {
+  return Math.round(incomeForMonthInEuro * 0.75)
+}
+
 export function getIncomeForMonth(month: number, numberOfBookedDaysPerMonth: Map<number, number>): number {
   const numberOfDaysBooked = numberOfBookedDaysPerMonth.get(month)
 
@@ -63,8 +70,30 @@ export function getIncomeForMonth(month: number, numberOfBookedDaysPerMonth: Map
     return 0
   }
 
-  const incomeForMonthInEuro = incomePerNightPerMonthInEuro.get(month) * (numberOfDaysBooked - 1)
-  return Math.round(incomeForMonthInEuro * 0.75)
+  const incomeForMonthInEuro = approximateIncomePerNightPerMonthInEuro.get(month) * (numberOfDaysBooked - 1)
+  return getIncomeWithoutPropertyManagementFees(incomeForMonthInEuro)
+}
+
+/**
+ * The income is approximate and the real income calculation is more advanced than this.
+ * We "just" remove the last day to get the correct number of nights, which is by no means "exact".
+ * @param start
+ * @param end
+ */
+function getIncomeForPeriod(start: Date, end: Date): number {
+  const dates = eachDayOfInterval({ start, end })
+  dates.pop()
+  let totalForPeriod = 0
+  dates.forEach((d) => {
+    totalForPeriod += approximateIncomePerNightPerMonthInEuro.get(d.getMonth())
+  })
+
+  return getIncomeWithoutPropertyManagementFees(totalForPeriod)
+}
+
+export function getIncomeForList(start: Date, end: Date): string {
+  const incomeForPeriod = getIncomeForPeriod(start, end)
+  return `${incomeForPeriod} ${currency}`
 }
 
 export function getIncomeForMonthForChart(month: number, numberOfBookedDaysPerMonth: Map<number, number>): string {
