@@ -9,7 +9,7 @@ import { formatISO } from "date-fns"
 import { translate } from "../i18n"
 import { spacing } from "../theme"
 import { BookingStatus } from "../models/booking-status"
-import { getIncomeForList } from "../services/bookingsCalculator"
+import { getIncome } from "../services/bookingsCalculator"
 
 /**
  * Shows bookings in a list
@@ -69,7 +69,7 @@ export const BookingList = observer(function BookingList() {
                         </Text>
                         <Text
                           style={textStyle}>
-                          {getIncomeForList(item.start, item.end)}
+                          {getIncome(item)}
                         </Text>
                       </View>
                     }

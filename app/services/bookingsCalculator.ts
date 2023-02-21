@@ -91,8 +91,8 @@ function getIncomeForPeriod(start: Date, end: Date): number {
   return getIncomeWithoutPropertyManagementFees(totalForPeriod)
 }
 
-export function getIncomeForList(start: Date, end: Date): string {
-  const incomeForPeriod = getIncomeForPeriod(start, end)
+export function getIncome(booking: Booking): string {
+  const incomeForPeriod = getIncomeForPeriod(booking.start, booking.end)
   return `${incomeForPeriod} ${currency}`
 }
 

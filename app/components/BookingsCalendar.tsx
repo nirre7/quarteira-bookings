@@ -2,11 +2,13 @@ import * as React from "react"
 import { View } from "react-native"
 import { observer } from "mobx-react-lite"
 import { Booking } from "../models/booking"
-import { CalendarList } from "react-native-calendars"
-import { eachDayOfInterval, formatISO, startOfYear } from "date-fns"
+import { CalendarList, DateData } from "react-native-calendars"
+import { eachDayOfInterval, formatISO, isWithinInterval, startOfYear } from "date-fns"
 import { useStores } from "../models"
-import { useTheme } from "react-native-paper"
+import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper"
 import { MD3Theme } from "react-native-paper/src/types"
+import { translate } from "../i18n"
+import { getIncome } from "../services/bookingsCalculator"
 
 function createBookingPeriods(bookings: Booking[], theme: MD3Theme) {
   const markedDates = {}
@@ -30,23 +32,59 @@ function createBookingPeriods(bookings: Booking[], theme: MD3Theme) {
   return markedDates
 }
 
+
 /**
  * Shows bookings in a calendar
  */
 export const BookingsCalendar = observer(function BookingsCalendar() {
   const { bookingStore } = useStores()
   const theme = useTheme()
-  const markedDates = createBookingPeriods(bookingStore.activeBookings, theme)
+  const activeBookings = bookingStore.activeBookings
+  const markedDates = createBookingPeriods(activeBookings, theme)
+  const [visible, setVisible] = React.useState(false)
+  const [approximateIncome, setApproximateIncome] = React.useState("")
+  const showDialog = () => setVisible(true)
+  const hideDialog = () => setVisible(false)
+  const showBookingInformation = (date: DateData) => {
+    const chosenDate = new Date(date.timestamp)
+    const matchingBooking = activeBookings.find(ab => isWithinInterval(chosenDate, {
+      start: ab.start,
+      end: ab.end,
+    }))
+
+    if (matchingBooking) {
+      showDialog()
+      setApproximateIncome(getIncome(matchingBooking))
+    }
+  }
 
   return (
     <View>
+      <Portal>
+        <Dialog visible={visible} onDismiss={hideDialog}>
+          <Dialog.Title>
+            {translate("bookingScreen.approximateIncome")}
+          </Dialog.Title>
+          <Dialog.Content>
+            <Text variant={"titleLarge"}>
+              {approximateIncome}
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={hideDialog}>
+              {translate("common.ok")}
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
       <CalendarList
         minDate={formatISO(startOfYear(new Date()), { representation: "date" })}
+        onDayPress={date => (showBookingInformation(date))}
         markingType={"period"}
         markedDates={markedDates}
         pastScrollRange={0}
         futureScrollRange={11}
-        style={{backgroundColor: theme.colors.background}}
+        style={{ backgroundColor: theme.colors.background }}
         theme={{
           calendarBackground: theme.colors.surfaceVariant,
           monthTextColor: theme.colors.onSurface,
