@@ -24,11 +24,17 @@ const approximateIncomePerNightPerMonthInEuro: Map<number, number> = new Map([
   [11, 423],
 ])
 
-export function getNumberOfBookingsPerMonth(allBookings: Date[]): Map<number, number> {
+export function getNumberOfBookingsPerMonth(bookings: Booking[]): Map<number, number> {
   const numberOfBookedDaysPerMonth = new Map<number, number>()
 
+  const allBookedNights = bookings.flatMap(b => {
+    const allBookedDays = eachDayOfInterval({ start: b.start, end: b.end })
+    allBookedDays.pop()
+    return allBookedDays
+  })
+
   for (let i = 0; i < 12; i++) {
-    const bookedDaysPerMonth = allBookings.filter(b => getMonth(b) === i).length
+    const bookedDaysPerMonth = allBookedNights.filter(b => getMonth(b) === i).length
     numberOfBookedDaysPerMonth.set(i, bookedDaysPerMonth)
   }
 
@@ -70,7 +76,7 @@ export function getIncomeForMonth(month: number, numberOfBookedDaysPerMonth: Map
     return 0
   }
 
-  const incomeForMonthInEuro = approximateIncomePerNightPerMonthInEuro.get(month) * (numberOfDaysBooked - 1)
+  const incomeForMonthInEuro = approximateIncomePerNightPerMonthInEuro.get(month) * (numberOfDaysBooked)
   return getIncomeWithoutPropertyManagementFees(incomeForMonthInEuro)
 }
 

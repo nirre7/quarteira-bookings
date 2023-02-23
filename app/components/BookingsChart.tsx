@@ -149,7 +149,7 @@ export const BookingsChart = observer(function BookingsChart() {
     lowSeasonBookingsInPercent,
     highSeasonBookingsInPercent,
   } = getDatesBookedDuringHigAndLowSeasonInPercent(allBookingDates)
-  const numberOfBookedDaysPerMonth = getNumberOfBookingsPerMonth(allBookingDates)
+  const numberOfBookedDaysPerMonth = getNumberOfBookingsPerMonth(bookings)
   const totalIncome = getTotalIncome(numberOfBookedDaysPerMonth)
 
   return (
@@ -171,7 +171,7 @@ export const BookingsChart = observer(function BookingsChart() {
         {getProgressChart(halfScreenSize, lowSeasonBookingsInPercent, "charts.lowSeasonTitle", theme, ChartSize.MEDIUM, getIncomeForLowSeasonForChart(numberOfBookedDaysPerMonth), mediumCardRight)}
       </View>
       <View style={wrapper2}>
-        {getMonthCharts(aThirdOfTheScreenSize, getNumberOfBookingsPerMonth(allBookingDates), theme)}
+        {getMonthCharts(aThirdOfTheScreenSize, numberOfBookedDaysPerMonth, theme)}
       </View>
     </ScrollView>
   )
