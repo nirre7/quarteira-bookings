@@ -86,9 +86,11 @@ export const BookingsCalendar = observer(function BookingsCalendar() {
         </Dialog>
       </Portal>
       <CalendarList
+        initialScrollIndex={5}
         minDate={formatISO(startOfYear(new Date()), { representation: "date" })}
         onDayPress={date => (showBookingInformation(date))}
         markingType={"period"}
+        firstDay={1}
         markedDates={markedDates}
         pastScrollRange={calendarScrollRange[0]}
         futureScrollRange={calendarScrollRange[1]}
