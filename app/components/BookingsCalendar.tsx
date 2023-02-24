@@ -3,7 +3,7 @@ import { View } from "react-native"
 import { observer } from "mobx-react-lite"
 import { Booking } from "../models/booking"
 import { CalendarList, DateData } from "react-native-calendars"
-import { eachDayOfInterval, formatISO, isWithinInterval, startOfYear } from "date-fns"
+import { differenceInCalendarMonths, eachDayOfInterval, formatISO, isWithinInterval, startOfYear } from "date-fns"
 import { useStores } from "../models"
 import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper"
 import { MD3Theme } from "react-native-paper/src/types"
@@ -32,6 +32,13 @@ function createBookingPeriods(bookings: Booking[], theme: MD3Theme) {
   return markedDates
 }
 
+function getCalendarScrollRange(): [number, number] {
+  const today = new Date()
+  return [
+    differenceInCalendarMonths(today, new Date(today.getFullYear(), 0, 1)),
+    differenceInCalendarMonths(new Date(today.getFullYear(), 11, 31), today),
+  ]
+}
 
 /**
  * Shows bookings in a calendar
@@ -41,6 +48,7 @@ export const BookingsCalendar = observer(function BookingsCalendar() {
   const theme = useTheme()
   const activeBookings = bookingStore.activeBookings
   const markedDates = createBookingPeriods(activeBookings, theme)
+  const calendarScrollRange = getCalendarScrollRange()
   const [visible, setVisible] = React.useState(false)
   const [approximateIncome, setApproximateIncome] = React.useState("")
   const showDialog = () => setVisible(true)
@@ -82,8 +90,8 @@ export const BookingsCalendar = observer(function BookingsCalendar() {
         onDayPress={date => (showBookingInformation(date))}
         markingType={"period"}
         markedDates={markedDates}
-        pastScrollRange={0}
-        futureScrollRange={11}
+        pastScrollRange={calendarScrollRange[0]}
+        futureScrollRange={calendarScrollRange[1]}
         style={{ backgroundColor: theme.colors.background }}
         theme={{
           calendarBackground: theme.colors.surfaceVariant,
