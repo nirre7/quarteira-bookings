@@ -51,6 +51,9 @@
         "resizeMode": "contain",
         "backgroundColor": "#00668a"
       }
-    }
+    },
+    "plugins": [
+      "expo-localization"
+    ]
   }
 }

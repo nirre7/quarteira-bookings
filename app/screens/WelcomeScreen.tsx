@@ -11,6 +11,7 @@ import { useSafeAreaInsetsStyle } from "../utils/useSafeAreaInsetsStyle"
 const welcomeLogo = require("../../assets/images/logo.png")
 const welcomeFace = require("../../assets/images/welcome-face.png")
 
+interface WelcomeScreenProps extends AppStackScreenProps<"Welcome"> {}
 
 export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeScreen(
 ) {
@@ -48,7 +49,7 @@ const $topContainer: ViewStyle = {
   flexGrow: 1,
   flexBasis: "57%",
   justifyContent: "center",
-  paddingHorizontal: spacing.large,
+  paddingHorizontal: spacing.lg,
 }
 
 const $bottomContainer: ViewStyle = {
@@ -58,13 +59,13 @@ const $bottomContainer: ViewStyle = {
   backgroundColor: colors.palette.neutral100,
   borderTopLeftRadius: 16,
   borderTopRightRadius: 16,
-  paddingHorizontal: spacing.large,
+  paddingHorizontal: spacing.lg,
   justifyContent: "space-around",
 }
 const $welcomeLogo: ImageStyle = {
   height: 88,
   width: "100%",
-  marginBottom: spacing.huge,
+  marginBottom: spacing.xxl,
 }
 
 const $welcomeFace: ImageStyle = {
@@ -77,5 +78,5 @@ const $welcomeFace: ImageStyle = {
 }
 
 const $welcomeHeading: TextStyle = {
-  marginBottom: spacing.medium,
+  marginBottom: spacing.md,
 }

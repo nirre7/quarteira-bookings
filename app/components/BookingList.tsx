@@ -98,10 +98,10 @@ export const BookingList = observer(function BookingList() {
 })
 
 const card: ViewStyle = {
-  marginTop: spacing.tiny,
-  marginBottom: spacing.tiny,
-  marginLeft: spacing.medium,
-  marginRight: spacing.medium,
+  marginTop: spacing.xxs,
+  marginBottom: spacing.xxs,
+  marginLeft: spacing.md,
+  marginRight: spacing.md,
 }
 
 const cardContent: ViewStyle = {
@@ -111,8 +111,8 @@ const cardContent: ViewStyle = {
 
 const header: TextStyle = {
   textAlign: "center",
-  marginTop: spacing.small,
-  marginBottom: spacing.extraSmall,
+  marginTop: spacing.sm,
+  marginBottom: spacing.xs,
 }
 
 const wrapper: ViewStyle = {

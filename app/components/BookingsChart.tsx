@@ -179,40 +179,40 @@ export const BookingsChart = observer(function BookingsChart() {
 
 const wrapper: ViewStyle = {
   flexDirection: "row",
-  marginBottom: spacing.extraSmall,
-  marginTop: spacing.extraSmall,
+  marginBottom: spacing.xs,
+  marginTop: spacing.xs,
 }
 
 const wrapper2: ViewStyle = {}
 
 const mediumCardLeft: ViewStyle = {
-  marginLeft: spacing.extraSmall,
-  marginRight: spacing.tiny,
+  marginLeft: spacing.xs,
+  marginRight: spacing.xxs,
 }
 
 const mediumCardRight: ViewStyle = {
-  marginLeft: spacing.tiny,
-  marginRight: spacing.extraSmall,
+  marginLeft: spacing.xxs,
+  marginRight: spacing.xs,
 }
 
 const smallCardLeft: ViewStyle = {
-  marginLeft: spacing.extraSmall,
-  marginRight: spacing.tiny,
+  marginLeft: spacing.xs,
+  marginRight: spacing.xxs,
 }
 
 const smallCardRight: ViewStyle = {
-  marginLeft: spacing.tiny,
-  marginRight: spacing.extraSmall,
+  marginLeft: spacing.xxs,
+  marginRight: spacing.xs,
 }
 
 const middleCard: ViewStyle = {
-  marginLeft: spacing.tiny + 2,
-  marginRight: spacing.tiny + 2,
+  marginLeft: spacing.xxs + 2,
+  marginRight: spacing.xxs + 2,
 }
 
 const quarterWrapper: ViewStyle = {
   flexDirection: "row",
-  marginBottom: spacing.extraSmall,
+  marginBottom: spacing.xs,
 }
 
 const chartLabel = {
@@ -224,7 +224,7 @@ const totalIncomeStyle: TextStyle = {
 }
 
 const totalIncomeCard: ViewStyle = {
-  marginTop: spacing.extraSmall,
-  marginLeft: spacing.extraSmall,
-  marginRight: spacing.extraSmall,
+  marginTop: spacing.xs,
+  marginLeft: spacing.xs,
+  marginRight: spacing.xs,
 }

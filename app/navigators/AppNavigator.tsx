@@ -9,17 +9,19 @@ import {
   DefaultTheme,
   NavigationContainer,
 } from "@react-navigation/native"
-import { createNativeStackNavigator } from "@react-navigation/native-stack"
+import { createNativeStackNavigator, NativeStackScreenProps } from "@react-navigation/native-stack"
 import { StackScreenProps } from "@react-navigation/stack"
 import { observer } from "mobx-react-lite"
 import React from "react"
 import { useColorScheme } from "react-native"
+import * as Screens from "app/screens"
 import Config from "../config"
 import {
   WelcomeScreen,
   BookingsScreen
 } from "../screens"
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
+import { colors } from "app/theme"
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -38,6 +40,7 @@ export type AppStackParamList = {
   Welcome: undefined
   Bookings: undefined
   // 🔥 Your screens go here
+  // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
 /**
@@ -67,7 +70,8 @@ const AppStack = observer(function AppStack() {
   )
 })
 
-interface NavigationProps extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
+export interface NavigationProps
+  extends Partial<React.ComponentProps<typeof NavigationContainer>> {}
 
 export const AppNavigator = observer(function AppNavigator(props: NavigationProps) {
   const colorScheme = useColorScheme()
