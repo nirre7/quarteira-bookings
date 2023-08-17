@@ -73,6 +73,10 @@ buck-out/
 .expo/*
 bin/Exponent.app
 
+# If using Expo Go/Prebuild, uncomment these:
+#android
+#ios
+
 npm-debug.*
 *.jks
 *.p8
@@ -84,7 +88,10 @@ web-build/
 
 # Configurations
 !env.js
+
+/coverage
+
 app/credentials.json
 
-ios/GoogleService-Info.plist
-android/app/google-services.json
+GoogleService-Info.plist
+google-services.json
