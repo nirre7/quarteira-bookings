@@ -63,6 +63,9 @@ export function getDaysForMonth(month: number): number {
 
 export function getAllBookings(bookings: Booking[]): Date[] {
   return bookings.flatMap(b => eachDayOfInterval({ start: b.start, end: b.end }))
+    .filter((date, i, self) =>
+      self.findIndex(d => d.getTime() === date.getTime()) === i,
+    )
 }
 
 export function getDatesBookedDuringHigAndLowSeasonInPercent(allBookingDates: Date[]) {
