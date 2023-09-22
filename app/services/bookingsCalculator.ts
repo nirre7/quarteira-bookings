@@ -1,4 +1,4 @@
-import { differenceInCalendarDays, eachDayOfInterval, getDaysInMonth, getMonth } from "date-fns"
+import { differenceInCalendarDays, eachDayOfInterval, getDaysInMonth, getMonth, sub } from "date-fns"
 import { Booking } from "../models/booking"
 
 const currentYear = new Date().getFullYear()
@@ -114,7 +114,7 @@ function getIncomeForPeriod(start: Date, end: Date): number {
 }
 
 export function getIncome(booking: Booking): string {
-  const incomeForPeriod = getIncomeForPeriod(booking.start, booking.end)
+  const incomeForPeriod = getIncomeForPeriod(booking.start, sub(booking.end, { "days": 1 }))
   return `${incomeForPeriod} ${currency}`
 }
 
