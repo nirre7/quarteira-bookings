@@ -3,7 +3,7 @@ import { Booking, BookingModel } from "./booking"
 import firestore, { FirebaseFirestoreTypes } from "@react-native-firebase/firestore"
 import { withSetPropAction } from "./helpers/withSetPropAction"
 import { BookingStatus } from "./booking-status"
-import { isAfter } from "date-fns"
+import { isAfter, isBefore } from "date-fns"
 import { translate } from "../i18n"
 
 export const BookingStoreModel = types
@@ -39,9 +39,10 @@ export const BookingStoreModel = types
     },
     get sortedActiveAndRemovedBookings(): (Booking | string)[] {
       const activeBookings = this.activeBookings
+        .sort((b1, b2) => isBefore(b1.created, b2.created) ? 1 : -1)
       const removedBookings = store.bookings
         .filter(b => b.status === BookingStatus.REMOVED)
-        .sort((b1, b2) => isAfter(b1.modified, b2.modified) ? 1 : -1)
+        .sort((b1, b2) => isBefore(b1.modified, b2.modified) ? 1 : -1)
 
       return [
         translate("bookingScreen.active"),
