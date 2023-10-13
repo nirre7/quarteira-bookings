@@ -12,23 +12,24 @@ interface BookingScreenProps extends AppStackScreenProps<"Bookings"> {
 }
 
 export const BookingsScreen: FC<BookingScreenProps> = observer(function BookingsScreen() {
-  const { bookingStore } = useStores()
+  const { bookingStore, reviewStore } = useStores()
 
-  const getBookings = async () => {
+  const loadData = async () => {
     await bookingStore.getBookings()
+    await reviewStore.getReviews()
   }
 
   useEffect(() => {
 
     if (auth().currentUser) {
-      getBookings()
+      loadData()
     }
 
     if (!auth().currentUser) {
       auth()
         .signInWithEmailAndPassword(credentials.email, credentials.password)
         .then(() => {
-          getBookings()
+          loadData()
         })
         .catch(error => {
           __DEV__ && console.tron.warn(error)
@@ -43,9 +44,7 @@ export const BookingsScreen: FC<BookingScreenProps> = observer(function Bookings
         <Appbar.Content title={"Quarteria Bookings"}></Appbar.Content>
         <Appbar.Action icon="sync"
                        disabled={bookingStore.loading}
-                       onPress={() => {
-                         bookingStore.getBookings()
-                       }}
+                       onPress={() => loadData()}
                        animated={true} />
       </Appbar.Header>
       <View style={wrapper}>
