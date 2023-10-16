@@ -1,19 +1,17 @@
 import * as React from "react"
 import { observer } from "mobx-react-lite"
 import { useStores } from "app/models"
-import { FlatList, useWindowDimensions, View, ViewStyle } from "react-native"
+import { FlatList, View, ViewStyle } from "react-native"
 import { Avatar, Card, Text } from "react-native-paper"
 import { Review } from "app/models/review"
 import { spacing } from "app/theme"
 import { formatISO } from "date-fns"
-import RenderHTML from "react-native-render-html"
 
 /**
  * Shows reviews in a list
  */
 export const ReviewList = observer(function ReviewList() {
   const { reviewStore } = useStores()
-  const { width } = useWindowDimensions()
 
   return (
     <View style={wrapper}>
@@ -30,10 +28,7 @@ export const ReviewList = observer(function ReviewList() {
               </Card.Title>
               <Card.Content>
                 <Text variant="bodyMedium">
-                  <RenderHTML
-                    source={{ html: item.guestComments }}
-                    contentWidth={width}
-                  />
+                  {formatComments(item.guestComments)}
                 </Text>
               </Card.Content>
             </Card>
@@ -44,6 +39,10 @@ export const ReviewList = observer(function ReviewList() {
     </View>
   )
 })
+
+function formatComments(comments: string): string {
+  return comments.replaceAll("<br/>", "\n")
+}
 
 const wrapper: ViewStyle = {
   flex: 1,
