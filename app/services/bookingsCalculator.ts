@@ -1,4 +1,4 @@
-import { differenceInCalendarDays, eachDayOfInterval, getDaysInMonth, getMonth, sub } from "date-fns"
+import { differenceInCalendarDays, eachDayOfInterval, getDaysInMonth, getMonth, isAfter, sub } from "date-fns"
 import { Booking } from "../models/booking"
 
 const currentYear = new Date().getFullYear()
@@ -106,12 +106,16 @@ export function getIncomeForMonth(month: number, numberOfBookedDaysPerMonth: Map
  * @param end
  */
 function getIncomeForPeriod(start: Date, end: Date): number {
-  const dates = eachDayOfInterval({ start, end })
-  dates.pop()
+
   let totalForPeriod = 0
-  dates.forEach((d) => {
-    totalForPeriod += approximateIncomePerNightPerMonthInEuro.get(d.getMonth())
-  })
+
+  if (isAfter(end, start)) {
+    const dates = eachDayOfInterval({ start, end })
+    dates.pop()
+    dates.forEach((d) => {
+      totalForPeriod += approximateIncomePerNightPerMonthInEuro.get(d.getMonth())
+    })
+  }
 
   return getIncomeWithoutPropertyManagementFees(totalForPeriod)
 }

@@ -30,6 +30,8 @@ const en = {
     modified: "Modified",
     created: "Created",
     income: "Income",
+    update: "Update",
+    filter: "Filter",
   },
   bookingScreen: {
     active: "Active",
