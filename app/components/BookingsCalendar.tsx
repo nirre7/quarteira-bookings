@@ -9,6 +9,7 @@ import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper"
 import { MD3Theme } from "react-native-paper/src/types"
 import { translate } from "../i18n"
 import { getIncome } from "../services/bookingsCalculator"
+import { BookingStatus } from "app/models/booking-status"
 
 function createBookingPeriods(bookings: Booking[], theme: MD3Theme) {
   const markedDates = {}
@@ -19,12 +20,14 @@ function createBookingPeriods(bookings: Booking[], theme: MD3Theme) {
       end: b.end,
     })
 
+    const dayColor = b.status === BookingStatus.ACTIVE ? theme.colors.primary : theme.colors.tertiary
+
     bookingDates.forEach((date, index) => {
       markedDates[formatISO(date, { representation: "date" })] = {
         startingDay: index === 0,
         endingDay: index + 1 === bookingDates.length,
         selected: true,
-        color: theme.colors.primary,
+        color: dayColor,
         textColor: theme.colors.inverseOnSurface,
       }
     })
@@ -46,7 +49,7 @@ function getCalendarScrollRange(): [number, number] {
 export const BookingsCalendar = observer(function BookingsCalendar() {
   const { bookingStore } = useStores()
   const theme = useTheme()
-  const activeBookings = bookingStore.activeBookings
+  const activeBookings = [...bookingStore.activeBookings, ...bookingStore.ownerBookings]
   const markedDates = createBookingPeriods(activeBookings, theme)
   const calendarScrollRange = getCalendarScrollRange()
   const [visible, setVisible] = React.useState(false)

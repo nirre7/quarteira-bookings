@@ -41,6 +41,9 @@ export const BookingStoreModel = types
     get activeBookings(): Booking[] {
       return store.bookings.filter(b => b.status === BookingStatus.ACTIVE && b.year === store.bookingYear)
     },
+    get ownerBookings(): Booking[] {
+      return store.bookings.filter(b => b.status === BookingStatus.OWNERS_USE && b.year === store.bookingYear)
+    },
     get sortedActiveAndRemovedBookings(): (Booking | string)[] {
       const activeBookings = this.activeBookings
         .sort((b1, b2) => isBefore(b1.created, b2.created) ? 1 : -1)
